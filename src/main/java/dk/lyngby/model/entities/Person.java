@@ -1,6 +1,11 @@
 package dk.lyngby.model.entities;
 
+import dk.lyngby.controller.PersonController;
+import io.javalin.Javalin;
+import io.javalin.http.Context;
 import jakarta.persistence.*;
+
+import java.util.Objects;
 
 @Entity
 @Table(name = "Person")
@@ -12,8 +17,6 @@ public class Person {
     @Column(name = "idPersonPK", nullable = false)
     private Integer id;
 
-    @Column(name = "email", length = 45)
-    private String email;
 
     @Column(name = "firstName", length = 45)
     private String firstName;
@@ -21,25 +24,30 @@ public class Person {
     @Column(name = "lastName", length = 45)
     private String lastName;
 
-    public Person() {
-    }
+    @Column(name = "age")
+    private Integer age;
 
-    public Person(String email, String firstName, String lastName) {
-        this.email = email;
+    @Column(name = "email", length = 45)
+    private String email;
+
+    public Person() {}
+
+    public Person(String firstName, String lastName, Integer age, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.age = age;
+        this.email = email;
     }
+
+     public Person(Context ctx) {
+         this.firstName = ctx.formParam("firstName");
+         this.lastName = ctx.formParam("lastName");
+         this.age = Integer.parseInt(Objects.requireNonNull(ctx.formParam("age")));
+         this.email = ctx.formParam("email");
+     }
 
     public Integer getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     public String getFirstName() {
@@ -50,4 +58,11 @@ public class Person {
         return lastName;
     }
 
+    public Integer getAge() {
+        return age;
+    }
+
+    public String getEmail() {
+        return email;
+    }
 }

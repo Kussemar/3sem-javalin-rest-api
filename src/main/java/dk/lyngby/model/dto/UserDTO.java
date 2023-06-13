@@ -1,4 +1,4 @@
-package dk.lyngby.service.dto;
+package dk.lyngby.model.dto;
 
 import dk.lyngby.model.entities.User;
 
