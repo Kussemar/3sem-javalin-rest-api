@@ -9,7 +9,18 @@ import java.util.List;
 
 public class PersonDAO {
 
-    private final SessionFactory sessionFactory = HibernateConfig.getSessionConfigFactory();
+    private static PersonDAO instance;
+    private static SessionFactory sessionFactory;
+
+    private PersonDAO() {}
+
+    public static PersonDAO getInstance(SessionFactory _sessionFactory) {
+        if (instance == null) {
+            sessionFactory = _sessionFactory;
+            instance = new PersonDAO();
+        }
+        return instance;
+    }
 
     public Person create(Person person) {
         try(Session session = sessionFactory.openSession()) {
@@ -23,10 +34,15 @@ public class PersonDAO {
     }
 
     public List<Person> readAll() {
-        // TODO: Get all persons from database
-        return List.of(
-                new Person("John", "Doe", 25, "doe@mail.com"),
-                new Person("Michelle", "Schmidt", 25, "schmidt@mail.com"));
+        try(Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            List<Person> persons = session.createQuery("from Person", Person.class).list();
+            session.getTransaction().commit();
+            return persons;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public Person read(int id) {

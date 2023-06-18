@@ -2,10 +2,8 @@ package dk.lyngby.dao;
 
 import dk.lyngby.config.HibernateConfig;
 import dk.lyngby.model.Person;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.hibernate.SessionFactory;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,8 +13,13 @@ class PersonDAOTest {
 
     @BeforeAll
     static void setUpAll() {
-        HibernateConfig.setTest(true);
-        personDAO = new PersonDAO();
+        SessionFactory sessionConfigFactoryTest = HibernateConfig.getSessionConfigFactoryTest();
+        personDAO = PersonDAO.getInstance(sessionConfigFactoryTest);
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        HibernateConfig.setTest(false);
     }
 
     @BeforeEach

@@ -1,15 +1,22 @@
 package dk.lyngby.handler;
 
+import dk.lyngby.config.HibernateConfig;
 import dk.lyngby.dao.PersonDAO;
 import dk.lyngby.dto.PersonDTO;
 import dk.lyngby.model.Person;
 import io.javalin.http.Context;
+import org.hibernate.SessionFactory;
 
 import java.util.List;
 
 public class PersonHandler {
 
-    PersonDAO personDao = new PersonDAO();
+    private final PersonDAO personDao;
+
+    public PersonHandler() {
+        SessionFactory sessionFactory = HibernateConfig.getSessionConfigFactory();
+        personDao = PersonDAO.getInstance(sessionFactory);
+    }
 
     public void createPerson(Context ctx) {
         ctx.res().setStatus(201);
