@@ -1,10 +1,7 @@
 package dk.lyngby.config;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.javalin.Javalin;
 import io.javalin.config.JavalinConfig;
-import io.javalin.json.JavalinJackson;
-import io.javalin.plugin.bundled.CorsPluginConfig;
 
 public class ApplicationConfig {
 

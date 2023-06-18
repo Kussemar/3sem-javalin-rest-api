@@ -1,13 +1,23 @@
 package dk.lyngby.dao;
 
+import dk.lyngby.config.HibernateConfig;
 import dk.lyngby.model.Person;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 import java.util.List;
 
 public class PersonDAO {
 
+    private final SessionFactory sessionFactory = HibernateConfig.getSessionConfigFactoryDev();
+
     public Person create(Person person) {
         // TODO: Save person to database
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        session.persist(person);
+        session.getTransaction().commit();
+        session.close();
         return person;
     }
 
