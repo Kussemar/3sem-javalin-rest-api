@@ -1,6 +1,6 @@
-package dk.lyngby.model.dto;
+package dk.lyngby.dto;
 
-import dk.lyngby.model.entities.User;
+import dk.lyngby.model.User;
 
 import java.security.Principal;
 import java.util.Set;

@@ -1,7 +1,7 @@
 package dk.lyngby;
 
 import dk.lyngby.config.ApplicationConfig;
-import dk.lyngby.controller.Routes;
+import dk.lyngby.routes.Routes;
 import io.javalin.Javalin;
 
 public class Main {

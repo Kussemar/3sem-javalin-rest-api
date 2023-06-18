@@ -1,6 +1,6 @@
-package dk.lyngby.controller;
+package dk.lyngby.handler;
 
-import dk.lyngby.model.entities.Person;
+import dk.lyngby.model.Person;
 import io.javalin.Javalin;
 import io.javalin.validation.ValidationError;
 import io.javalin.validation.Validator;

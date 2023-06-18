@@ -1,4 +1,4 @@
-package dk.lyngby.model.entities;
+package dk.lyngby.model;
 
 import jakarta.persistence.*;
 

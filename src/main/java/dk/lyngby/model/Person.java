@@ -1,7 +1,5 @@
-package dk.lyngby.model.entities;
+package dk.lyngby.model;
 
-import dk.lyngby.controller.PersonController;
-import io.javalin.Javalin;
 import io.javalin.http.Context;
 import jakarta.persistence.*;
 

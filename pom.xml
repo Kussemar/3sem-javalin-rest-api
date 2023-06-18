@@ -35,11 +35,6 @@
         <!--   Utilities     -->
 
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
-        </dependency>
-        <dependency>
             <!-- https://github.com/cdimascio/dotenv-java       -->
             <groupId>io.github.cdimascio</groupId>
             <artifactId>dotenv-java</artifactId>

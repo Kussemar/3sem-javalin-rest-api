@@ -12,13 +12,19 @@ public class ApplicationConfig {
     // plugins
 
         // logging
-        // config.plugins.enableDevLogging(); // enables extensive development logging in terminal
+        config.plugins.enableDevLogging(); // enables extensive development logging in terminal
 
     // http
         config.http.defaultContentType = "application/json"; // default content type for requests
+        // add options method to all routes
+
+    // accessManager
+        // cors
         config.accessManager((handler, ctx, permittedRoles) -> { // access manager for all routes
             ctx.header("Access-Control-Allow-Origin", "*");
             ctx.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            ctx.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+            ctx.header("Access-Control-Allow-Credentials", "true");
             handler.handle(ctx);
         });
 

@@ -1,13 +1,12 @@
-package dk.lyngby.model.dto;
+package dk.lyngby.dto;
 
-import dk.lyngby.model.entities.Person;
+import dk.lyngby.model.Person;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PersonDTO {
 
-    private int id;
     private String firstName;
     private String lastName;
     private int age;
@@ -29,7 +28,7 @@ public class PersonDTO {
         this.email = email;
     }
 
-    public static List<PersonDTO> getPersonDTOs(List<Person> personList) {
+    public static List<PersonDTO> toPersonDTOs(List<Person> personList) {
         List<PersonDTO> personDTOList =  new ArrayList<>();
         for (Person person : personList) {
             personDTOList.add(new PersonDTO(person));
@@ -37,7 +36,6 @@ public class PersonDTO {
         return personDTOList;
     }
 
-    public int getId() {return id;}
     public String getFirstName() {
         return firstName;
     }
@@ -50,6 +48,10 @@ public class PersonDTO {
 
     public String getEmail() {
         return email;
+    }
+
+    public Person toPerson() {
+        return new Person(firstName, lastName, age, email);
     }
 
 }
