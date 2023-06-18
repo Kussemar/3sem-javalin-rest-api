@@ -12,6 +12,7 @@ import java.util.Properties;
 
 public class HibernateConfig {
     private static SessionFactory sessionConfigFactory;
+    private static Boolean isTest = false;
 
     private static SessionFactory buildSessionConfigFactoryDev() {
         try {
@@ -99,6 +100,15 @@ public class HibernateConfig {
     public static SessionFactory getSessionConfigFactoryTest() {
         if (sessionConfigFactory == null) sessionConfigFactory = buildSessionConfigFactoryTest();
         return sessionConfigFactory;
+    }
+
+    public static SessionFactory getSessionConfigFactory() {
+        if (isTest) return getSessionConfigFactoryTest();
+        return getSessionConfigFactoryDev();
+    }
+
+    public static void setTest(Boolean test) {
+        isTest = test;
     }
 
 }

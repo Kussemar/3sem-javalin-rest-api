@@ -9,15 +9,16 @@ import java.util.List;
 
 public class PersonDAO {
 
-    private final SessionFactory sessionFactory = HibernateConfig.getSessionConfigFactoryDev();
+    private final SessionFactory sessionFactory = HibernateConfig.getSessionConfigFactory();
 
     public Person create(Person person) {
-        // TODO: Save person to database
-        Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
-        session.persist(person);
-        session.getTransaction().commit();
-        session.close();
+        try(Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.persist(person);
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return person;
     }
 
