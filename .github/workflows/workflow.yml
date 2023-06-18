@@ -1,4 +1,4 @@
-#name: DevOps Workflow
+#name: API JAVALIN WORKFLOW
 #on:
 #  push:
 #    branches: [ main ]
@@ -38,5 +38,5 @@
 #          context: .
 #          file: ./Dockerfile
 #          push: true
-#          tags: ${{ secrets.DOCKERHUB_USERNAME }}/helloworld_javalin_api:latest
-#
+#          tags: ${{ secrets.DOCKERHUB_USERNAME }}/javalin_api:latest
+
