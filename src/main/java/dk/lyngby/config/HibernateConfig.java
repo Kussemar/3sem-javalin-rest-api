@@ -22,8 +22,8 @@ public class HibernateConfig {
             props.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
             props.put("hibernate.connection.driver_class", "org.postgresql.Driver");
             props.put("hibernate.connection.url", "jdbc:postgresql://localhost:5432/projectdb");
-            props.put("hibernate.connection.username", "dev");
-            props.put("hibernate.connection.password", "ax2");
+            props.put("hibernate.connection.username", "postgres");
+            props.put("hibernate.connection.password", "postgres");
             props.put("hibernate.archive.autodetection", "class");
             props.put("hibernate.current_session_context_class", "thread");
             props.put("hibernate.show_sql", "true");
