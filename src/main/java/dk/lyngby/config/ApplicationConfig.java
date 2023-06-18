@@ -30,6 +30,7 @@ public class ApplicationConfig {
     }
 
     public static void startServer(Javalin app, int port) {
+        HibernateConfig.setTest(false);
         app.start(port);
     }
 
