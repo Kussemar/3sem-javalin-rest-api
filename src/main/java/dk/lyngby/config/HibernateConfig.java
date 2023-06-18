@@ -45,7 +45,7 @@ public class HibernateConfig {
 
             configuration.setProperties(props);
 
-            getAnnotationConfiguration().getProperties().forEach(props::put);
+            getAnnotationConfiguration(configuration);
 
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
             System.out.println("Hibernate Java Config serviceRegistry created");
@@ -73,7 +73,7 @@ public class HibernateConfig {
 
             configuration.setProperties(props);
 
-            getAnnotationConfiguration().getProperties().forEach(props::put);
+            getAnnotationConfiguration(configuration);
 
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
             System.out.println("Hibernate Java Config serviceRegistry created");
@@ -85,12 +85,10 @@ public class HibernateConfig {
         }
     }
 
-    public static Configuration getAnnotationConfiguration() {
-        Configuration configuration = new Configuration();
+    public static void getAnnotationConfiguration(Configuration configuration) {
         configuration.addAnnotatedClass(Person.class);
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Role.class);
-        return configuration;
     }
 
     public static SessionFactory getSessionConfigFactoryDev() {
