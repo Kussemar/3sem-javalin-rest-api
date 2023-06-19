@@ -18,12 +18,26 @@ public class HibernateConfig {
         try {
             Configuration configuration = new Configuration();
 
+
             Properties props = new Properties();
+            System.out.println("System.getenv(\"DEPLOYED\") = " + System.getenv("DEPLOYED"));
+            boolean isDeployed = (System.getenv("DEPLOYED") != null);
+
+            if(isDeployed) {
+                String DB_USERNAME = System.getenv("DB_USERNAME");
+                String DB_PASSWORD = System.getenv("DB_PASSWORD");
+                String DB_NAME = System.getenv("DB_NAME");
+                String CONNECTION_STR = System.getenv("CONNECTION_STR") + DB_NAME;
+                props.setProperty("hibernate.connection.url", CONNECTION_STR);
+                props.setProperty("hibernate.connection.username", DB_USERNAME);
+                props.setProperty("hibernate.connection.password", DB_PASSWORD);
+            } else {
+                props.put("hibernate.connection.url", "jdbc:postgresql://localhost:5432/projectdb");
+                props.put("hibernate.connection.username", "dev");
+                props.put("hibernate.connection.password", "ax2");
+            }
             props.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
             props.put("hibernate.connection.driver_class", "org.postgresql.Driver");
-            props.put("hibernate.connection.url", "jdbc:postgresql://db:5432/projectdb");
-            props.put("hibernate.connection.username", "dev");
-            props.put("hibernate.connection.password", "ax2");
             props.put("hibernate.archive.autodetection", "class");
             props.put("hibernate.current_session_context_class", "thread");
             props.put("hibernate.show_sql", "true");
