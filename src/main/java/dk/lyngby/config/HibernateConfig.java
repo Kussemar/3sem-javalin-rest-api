@@ -21,7 +21,7 @@ public class HibernateConfig {
             Properties props = new Properties();
             props.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
             props.put("hibernate.connection.driver_class", "org.postgresql.Driver");
-            props.put("hibernate.connection.url", "jdbc:postgresql://localhost:5432/projectdb");
+            props.put("hibernate.connection.url", "jdbc:postgresql://db:5432/projectdb");
             props.put("hibernate.connection.username", "postgres");
             props.put("hibernate.connection.password", "postgres");
             props.put("hibernate.archive.autodetection", "class");
@@ -29,17 +29,17 @@ public class HibernateConfig {
             props.put("hibernate.show_sql", "true");
             props.put("hibernate.hbm2ddl.auto", "update");
 
-//            // Hibernate Default Pool Configuration
-//            // https://www.mastertheboss.com/hibernate-jpa/hibernate-configuration/configure-a-connection-pool-with-hibernate/
-//            props.put("hibernate.connection.provider_class", "org.hibernate.hikaricp.internal.HikariCPConnectionProvider");
-//            // Maximum waiting time for a connection from the pool
-//            props.put("hibernate.hikari.connectionTimeout", "10000");
-//            // Minimum number of ideal connections in the pool
-//            props.put("hibernate.hikari.minimumIdle", "5");
-//            // Maximum number of actual connection in the pool
-//            props.put("hibernate.hikari.maximumPoolSize", "20");
-//            // Maximum time that a connection is allowed to sit ideal in the pool
-//            props.put("hibernate.hikari.idleTimeout", "200000");
+            // Hibernate Default Pool Configuration
+            // https://www.mastertheboss.com/hibernate-jpa/hibernate-configuration/configure-a-connection-pool-with-hibernate/
+            props.put("hibernate.connection.provider_class", "org.hibernate.hikaricp.internal.HikariCPConnectionProvider");
+            // Maximum waiting time for a connection from the pool
+            props.put("hibernate.hikari.connectionTimeout", "10000");
+            // Minimum number of ideal connections in the pool
+            props.put("hibernate.hikari.minimumIdle", "5");
+            // Maximum number of actual connection in the pool
+            props.put("hibernate.hikari.maximumPoolSize", "20");
+            // Maximum time that a connection is allowed to sit ideal in the pool
+            props.put("hibernate.hikari.idleTimeout", "200000");
 
             props.put("hibernate.format_sql", "true");
             props.put("hibernate.use_sql_comments", "true");
