@@ -142,4 +142,8 @@ public class HibernateConfig {
         }
         return pomProperties.getProperty("db.name");
     }
+
+    public static void main(String[] args) {
+        System.out.println("getDBName() = " + getDBName());
+    }
 }
