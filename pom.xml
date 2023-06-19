@@ -82,7 +82,7 @@
         </dependency>
         <dependency>
             <!--   Hibernate Connection Pool      -->
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-hikaricp</artifactId>
             <version>${hibernate-version}</version>
         </dependency>
@@ -204,6 +204,12 @@
                             </excludes>
                         </filter>
                     </filters>
+                    <relocations>
+                        <relocation>
+                            <pattern>com.example</pattern>
+                            <shadedPattern>my.project.com.example</shadedPattern>
+                        </relocation>
+                    </relocations>
                 </configuration>
                 <executions>
                     <execution>

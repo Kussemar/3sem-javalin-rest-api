@@ -39,17 +39,17 @@
               </excludes>
             </filter>
           </filters>
+          <relocations>
+            <relocation>
+              <pattern>com.example</pattern>
+              <shadedPattern>my.project.com.example</shadedPattern>
+            </relocation>
+          </relocations>
         </configuration>
       </plugin>
     </plugins>
   </build>
   <dependencies>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-hikaricp</artifactId>
-      <version>6.2.4.Final</version>
-      <scope>compile</scope>
-    </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
