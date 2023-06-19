@@ -1,0 +1,21 @@
+version: '3.9'
+
+services:
+  api:
+    image: tyskerdocker/javalinapi:latest
+    container_name: api
+    environment:
+        - CONNECTION_STR=jdbc:postgresql://db:5432/projectdb
+        - DB_USERNAME=dev
+        - DB_PASSWORD=ax2
+        - DEPLOYED=TRUE
+    ports:
+      - "7070:7070"
+    networks:
+      - database_network
+
+networks:
+  database_network:
+    name: database_network
+    internal: false
+    driver: bridge
