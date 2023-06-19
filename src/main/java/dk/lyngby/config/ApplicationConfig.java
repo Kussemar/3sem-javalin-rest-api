@@ -6,16 +6,12 @@ import io.javalin.config.JavalinConfig;
 public class ApplicationConfig {
 
     public static void configurations(JavalinConfig config) {
-    // plugins
-
         // logging
         config.plugins.enableDevLogging(); // enables extensive development logging in terminal
 
-    // http
+        // http
         config.http.defaultContentType = "application/json"; // default content type for requests
-        // add options method to all routes
 
-    // accessManager
         // cors
         config.accessManager((handler, ctx, permittedRoles) -> { // access manager for all routes
             ctx.header("Access-Control-Allow-Origin", "*");
@@ -25,7 +21,7 @@ public class ApplicationConfig {
             handler.handle(ctx);
         });
 
-    // routing
+        // routing
         config.routing.contextPath = "/api/v1"; // base path for all routes
     }
 
