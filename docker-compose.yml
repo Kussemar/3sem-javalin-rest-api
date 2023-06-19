@@ -5,7 +5,7 @@ services:
     image: tyskerdocker/javalinapi:latest
     container_name: api
     environment:
-        - CONNECTION_STR=jdbc:postgresql://db:5432/projectdb
+        - CONNECTION_STR=jdbc:postgresql://db:5432/
         - DB_USERNAME=dev
         - DB_PASSWORD=ax2
         - DEPLOYED=TRUE

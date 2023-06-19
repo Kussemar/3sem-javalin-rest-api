@@ -16,6 +16,9 @@
         <restassured.version>5.3.0</restassured.version>
         <testcontainers.version>1.18.0</testcontainers.version>
         <junit.version>5.9.1</junit.version>
+
+        <!-- DATABASE PROJECT NAME SERVER       -->
+        <db.name>projectdb</db.name>
     </properties>
     <dependencies>
 
@@ -35,10 +38,10 @@
         <!--   Utilities     -->
 
         <dependency>
-            <!-- https://github.com/cdimascio/dotenv-java       -->
-            <groupId>io.github.cdimascio</groupId>
-            <artifactId>dotenv-java</artifactId>
-            <version>2.3.2</version>
+            <!-- Used for setting database name in pom.xml -->
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>properties-maven-plugin</artifactId>
+            <version>1.1.0</version>
         </dependency>
 
 
@@ -54,12 +57,6 @@
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>
             <version>0.4</version>
-        </dependency>
-        <dependency>
-            <!-- Used for setting database name in pom.xml -->
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>properties-maven-plugin</artifactId>
-            <version>1.1.0</version>
         </dependency>
 
         <!--  DB    -->

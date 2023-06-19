@@ -8,6 +8,8 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class HibernateConfig {
@@ -26,8 +28,8 @@ public class HibernateConfig {
             if(isDeployed) {
                 String DB_USERNAME = System.getenv("DB_USERNAME");
                 String DB_PASSWORD = System.getenv("DB_PASSWORD");
-                String DB_NAME = System.getenv("DB_NAME");
-                String CONNECTION_STR = System.getenv("CONNECTION_STR");
+                String DB_NAME = getDBName();
+                String CONNECTION_STR = System.getenv("CONNECTION_STR") + DB_NAME;
                 props.setProperty("hibernate.connection.url", CONNECTION_STR);
                 props.setProperty("hibernate.connection.username", DB_USERNAME);
                 props.setProperty("hibernate.connection.password", DB_PASSWORD);
@@ -127,5 +129,17 @@ public class HibernateConfig {
 
     public static Boolean getTest() {
         return isTest;
+    }
+
+    private static String getDBName() {
+        Properties pomProperties;
+        InputStream is = HibernateConfig.class.getClassLoader().getResourceAsStream("properties-from-pom.properties");
+        pomProperties = new Properties();
+        try {
+            pomProperties.load(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return pomProperties.getProperty("db.name");
     }
 }
