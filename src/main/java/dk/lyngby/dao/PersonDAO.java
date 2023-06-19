@@ -1,6 +1,5 @@
 package dk.lyngby.dao;
 
-import dk.lyngby.config.HibernateConfig;
 import dk.lyngby.model.Person;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,6 +9,7 @@ import java.util.List;
 public class PersonDAO {
 
     private static PersonDAO instance;
+
     private static SessionFactory sessionFactory;
 
     private PersonDAO() {}

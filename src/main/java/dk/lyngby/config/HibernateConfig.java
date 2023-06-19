@@ -22,7 +22,7 @@ public class HibernateConfig {
 
 
             Properties props = new Properties();
-            System.out.println("System.getenv(\"DEPLOYED\") = " + System.getenv("DEPLOYED"));
+
             boolean isDeployed = (System.getenv("DEPLOYED") != null);
 
             if(isDeployed) {

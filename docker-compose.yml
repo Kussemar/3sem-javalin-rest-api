@@ -9,6 +9,9 @@ services:
         - DB_USERNAME=dev
         - DB_PASSWORD=ax2
         - DEPLOYED=TRUE
+        - SECRET_KEY=841D8A6C80CBA4FCAD32D5367C18C53B
+        - TOKEN_EXPIRE_TIME=1800000
+        - ISSUER=cphbusiness.dk
     ports:
       - "7070:7070"
     networks:
