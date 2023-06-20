@@ -40,7 +40,7 @@ public class PersonHandler {
 
     public Handler getPersonById = ctx -> {
         ctx.res().setStatus(200);
-        int id = Integer.parseInt(ctx.pathParam("id"));
+        int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateID, "Not a valid id").get();
         Person person = personDao.read(id);
         PersonDTO personDTO = new PersonDTO(person);
         ctx.json(personDTO, PersonDTO.class);
@@ -58,7 +58,7 @@ public class PersonHandler {
         ctx.res().setStatus(200);
         int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateID, "Not a valid id").get();
         personDao.delete(id);
-        ctx.json(new Message(200, "Person deleted"), Message.class);
+        ctx.json(new Message(200, "Person with id " + id + " deleted"), Message.class);
     };
 
     private boolean validateID(int number) {
