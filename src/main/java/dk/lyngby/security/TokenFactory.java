@@ -7,6 +7,7 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.DirectEncrypter;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.BadJOSEException;
 import com.nimbusds.jose.proc.JWEDecryptionKeySelector;
 import com.nimbusds.jose.proc.JWEKeySelector;
 import com.nimbusds.jose.proc.SimpleSecurityContext;
@@ -15,8 +16,9 @@ import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import dk.lyngby.dto.UserDTO;
 import dk.lyngby.exceptions.ApiException;
+import dk.lyngby.exceptions.NotAuthorizedException;
 
-import javax.naming.AuthenticationException;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -25,17 +27,16 @@ import java.util.Set;
 public class TokenFactory {
     private static TokenFactory instance;
 
-    private TokenFactory() {
-    }
+    private TokenFactory() {}
 
     public static TokenFactory getInstance() {
         if (instance == null) {
             instance = new TokenFactory();
         }
-        return new TokenFactory();
+        return instance;
     }
 
-    public String returnSecretKey() {
+    private String returnSecretKey() {
         boolean isDeployed = (System.getenv("DEPLOYED") != null);
         if(isDeployed) {
             return System.getenv("SECRET_KEY");
@@ -87,10 +88,9 @@ public class TokenFactory {
             jweObject.encrypt(encrypter);
 
             return jweObject.serialize();
-        } catch (Exception exception) {
-            throw new ApiException(500, "Could not create token", exception);
+        } catch (JOSEException e) {
+            throw new ApiException(500, "Could not create token", e);
         }
-
     }
 
     public String[] parseJsonObject(String jsonString, Boolean tryLogin) throws ApiException {
@@ -114,7 +114,7 @@ public class TokenFactory {
         }
     }
 
-    public UserDTO verifyToken(String token) throws AuthenticationException {
+    public UserDTO verifyToken(String token) throws ApiException, NotAuthorizedException {
 
         String SECRET_KEY = returnSecretKey();
 
@@ -125,7 +125,7 @@ public class TokenFactory {
             jwtProcessor.setJWEKeySelector(jweKeySelector);
             JWTClaimsSet claimsSet = jwtProcessor.process(token, null);
 
-            if (new Date().after(claimsSet.getExpirationTime())) throw new AuthenticationException("Token is expired");
+            if (new Date().after(claimsSet.getExpirationTime())) throw new NotAuthorizedException(401, "Token is expired");
 
             String username = claimsSet.getClaim("username").toString();
             String roles = claimsSet.getClaim("roles").toString();
@@ -134,8 +134,10 @@ public class TokenFactory {
 
             return new UserDTO(username, rolesArray);
 
-        } catch (Exception e) {
-            throw new AuthenticationException("Could not validate token");
+        } catch (RuntimeException | ParseException | BadJOSEException | JOSEException e) {
+            throw new ApiException(401, e.getMessage());
+        } catch (NotAuthorizedException e) {
+            throw new NotAuthorizedException(401, e.getMessage());
         }
     }
 }

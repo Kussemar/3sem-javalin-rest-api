@@ -10,33 +10,35 @@ import dk.lyngby.security.TokenFactory;
 import io.javalin.http.Handler;
 import org.hibernate.SessionFactory;
 
-public class LoginHandler {
+public class RegisterHandler {
 
     private UserDao USER_DAO;
     private final TokenFactory TOKEN_FACTORY = TokenFactory.getInstance();
 
-    public LoginHandler() {
+    public RegisterHandler() {
         SessionFactory sessionFactory = HibernateConfig.getSessionConfigFactory();
         USER_DAO = UserDao.getInstance(sessionFactory);
     }
 
-    public Handler login = ctx -> {
+    public Handler register = ctx -> {
         try {
             String request = ctx.body();
-            String[] userInfos = TOKEN_FACTORY.parseJsonObject(request, true);
-            User user = USER_DAO.getVerifiedUser(userInfos[0], userInfos[1]);
+            String[] userInfos = TOKEN_FACTORY.parseJsonObject(request, false);
+
+            User user = USER_DAO.createUser(userInfos[0], userInfos[1], userInfos[2]);
             String token = TOKEN_FACTORY.createToken(userInfos[0], user.getRolesAsStrings());
+
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("username", userInfos[0]);
             responseJson.addProperty("token", token);
+            ctx.status(201);
             ctx.result(responseJson.toString());
-        } catch (ApiException  e) {
+        } catch (ApiException e) {
             ctx.status(e.getStatusCode());
-            ctx.json(new ApiException(e.getStatusCode(), e.getLocalizedMessage()));
+            ctx.json(new ApiException(e.getStatusCode(), e.getMessage()));
         } catch (NotAuthorizedException e) {
             ctx.status(e.getStatusCode());
             ctx.json(new NotAuthorizedException(e.getStatusCode(), e.getMessage()));
         }
     };
-
 }

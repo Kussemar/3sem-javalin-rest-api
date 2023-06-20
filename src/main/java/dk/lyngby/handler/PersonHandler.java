@@ -3,61 +3,66 @@ package dk.lyngby.handler;
 import dk.lyngby.config.HibernateConfig;
 import dk.lyngby.dao.PersonDAO;
 import dk.lyngby.dto.PersonDTO;
+import dk.lyngby.dto.UserDTO;
 import dk.lyngby.model.Person;
 import io.javalin.http.Context;
+import io.javalin.http.Handler;
 import org.hibernate.SessionFactory;
 
 import java.util.List;
 
 public class PersonHandler {
 
-    private final PersonDAO personDao;
+    private PersonDAO personDao;
 
     public PersonHandler() {
         SessionFactory sessionFactory = HibernateConfig.getSessionConfigFactory();
         personDao = PersonDAO.getInstance(sessionFactory);
     }
 
-    public void createPerson(Context ctx) {
+    public Handler createPerson = ctx -> {
         ctx.res().setStatus(201);
         Person person = personDao.create(validatePerson(ctx).toPerson());
         PersonDTO personDTO = new PersonDTO(person);
         ctx.json(personDTO, PersonDTO.class);
-    }
+    };
 
-    public void getAllPersons(Context ctx) {
+    public Handler getAllPersons = ctx -> {
         ctx.res().setStatus(200);
         List<Person> persons = personDao.readAll();
         List<PersonDTO> personDTOS = PersonDTO.toPersonDTOs(persons);
-        ctx.json(personDTOS, PersonDTO.class);
-    }
 
-    public void getPersonById(Context ctx) {
+        UserDTO user = ctx.attribute("user");
+        System.out.println(user);
+
+        ctx.json(personDTOS, PersonDTO.class);
+    };
+
+    public Handler getPersonById = ctx -> {
         ctx.res().setStatus(200);
         int id = Integer.parseInt(ctx.pathParam("id"));
         Person person = personDao.read(id);
         PersonDTO personDTO = new PersonDTO(person);
         ctx.json(personDTO, PersonDTO.class);
-    }
+    };
 
-    public void updatePersonById(Context ctx) {
+    public Handler updatePersonById = ctx -> {
         ctx.res().setStatus(200);
-        int id = ctx.queryParamAsClass("id", Integer.class).check(this::validateID, "Object can not be found.").get();
-        Person update = personDao.update(validatePerson(ctx).toPerson());
+        int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateID, "Not a valid id").get();
+        Person update = personDao.update(validatePerson(ctx).toPerson(), id);
         PersonDTO personDTO = new PersonDTO(update);
         ctx.json(personDTO, PersonDTO.class);
-    }
+    };
 
-    public void deletePersonById(Context ctx) {
-        ctx.res().setStatus(204);
-        int id = ctx.queryParamAsClass("id", Integer.class).check(this::validateID, "Object can not be found.").get();
+    public Handler deletePersonById = ctx -> {
+        ctx.res().setStatus(200);
+        int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateID, "Not a valid id").get();
         personDao.delete(id);
-        ctx.result("Not implemented yet ");
-    }
+        ctx.json(new Message(200, "Person deleted"), Message.class);
+    };
 
     private boolean validateID(int number) {
-        // TODO: Validate ID else return false
-        return true;
+        return personDao.validateID(number);
     }
 
     private PersonDTO validatePerson(Context ctx) {

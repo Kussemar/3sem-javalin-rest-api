@@ -6,7 +6,7 @@
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="Hibernate" />
         <datasource-mapping>
-          <factory-entry name="3sem-javalin-rest-api" value="e4b7382f-38bd-49fb-94cf-762ed834ca54" />
+          <factory-entry name="3sem-javalin-rest-api" value="cfc301c4-8351-4d96-bcf6-02355248aad1" />
         </datasource-mapping>
         <naming-strategy-map />
       </configuration>

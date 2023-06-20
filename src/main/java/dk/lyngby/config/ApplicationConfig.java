@@ -13,7 +13,8 @@ public class ApplicationConfig {
         config.http.defaultContentType = "application/json"; // default content type for requests
 
         // cors
-        config.accessManager((handler, ctx, permittedRoles) -> { // access manager for all routes
+        config.accessManager((handler, ctx, permittedRoles) -> {
+            System.out.println("Permitted roles: " + permittedRoles);
             ctx.header("Access-Control-Allow-Origin", "*");
             ctx.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
             ctx.header("Access-Control-Allow-Headers", "Content-Type, Authorization");

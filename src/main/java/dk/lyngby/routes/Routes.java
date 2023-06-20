@@ -1,5 +1,7 @@
 package dk.lyngby.routes;
 
+import dk.lyngby.exceptions.ApiException;
+import dk.lyngby.exceptions.NotAuthorizedException;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.EndpointGroup;
 
@@ -7,21 +9,26 @@ import static io.javalin.apibuilder.ApiBuilder.path;
 
 public class Routes {
 
-    PersonRoutes personRoutes = new PersonRoutes();
-    AuthenticationRoute authenticationRoutes = new AuthenticationRoute();
+    private final PersonRoutes personRoutes = new PersonRoutes();
+    private final AuthenticationRoute authenticationRoutes = new AuthenticationRoute();
 
     public EndpointGroup getRoutes(Javalin app) {
         return () -> {
-            app.before(ctx -> {
-                // TODO: Authenticate
-                System.out.println("Before");
-            });
             app.routes(() -> {
                 path("/", authenticationRoutes.getRoutes());
-                path("/persons", personRoutes.getRoutes());
+                path("/", personRoutes.getRoutes());
+            });
+            app.exception(ApiException.class, (e, ctx) -> {
+                ctx.status(e.getStatusCode());
+                ctx.json(new ApiException( e.getStatusCode(), e.getMessage()));
+            });
+            app.exception(NotAuthorizedException.class, (e, ctx) -> {
+                ctx.status(e.getStatusCode());
+                ctx.json(new NotAuthorizedException(e.getStatusCode(), e.getMessage()));
             });
             app.exception(Exception.class, (e, ctx) -> {
-                ctx.result("Something went wrong: " + e.getMessage());
+                ctx.status(500);
+                ctx.json(new Exception(e.getMessage()));
             });
             app.after(ctx -> {
                 // TODO: Add logging

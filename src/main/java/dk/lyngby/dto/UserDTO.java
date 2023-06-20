@@ -36,4 +36,9 @@ public class UserDTO implements Principal {
     public boolean isUserInRole(String role) {
         return this.roles.contains(role);
     }
+
+    @Override
+    public String toString() {
+        return String.format("UserDTO{username='%s', roles=%s}", username, roles);
+    }
 }
