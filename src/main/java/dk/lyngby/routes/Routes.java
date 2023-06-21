@@ -20,10 +20,12 @@ public class Routes {
             });
             app.exception(ApiException.class, (e, ctx) -> {
                 ctx.status(e.getStatusCode());
+                System.out.println("ApiException: Routes" + e.getStatusCode());
                 ctx.json(new ApiException( e.getStatusCode(), e.getMessage()));
             });
             app.exception(NotAuthorizedException.class, (e, ctx) -> {
                 ctx.status(e.getStatusCode());
+                System.out.println("NotAuthorizedException: Routes" + e.getStatusCode());
                 ctx.json(new NotAuthorizedException(e.getStatusCode(), e.getMessage()));
             });
             app.exception(Exception.class, (e, ctx) -> {

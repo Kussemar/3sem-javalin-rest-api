@@ -52,6 +52,7 @@ public class TokenFactory {
         String TOKEN_EXPIRE_TIME;
 
         boolean isDeployed = (System.getenv("DEPLOYED") != null);
+        System.out.println("isDeployed Token Factory: " + isDeployed);
 
         if (isDeployed) {
             ISSUER = System.getenv("ISSUER");
