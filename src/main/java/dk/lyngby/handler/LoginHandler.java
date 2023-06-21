@@ -31,10 +31,10 @@ public class LoginHandler {
             responseJson.addProperty("token", token);
             ctx.result(responseJson.toString());
         } catch (ApiException  e) {
-            ctx.status(e.getStatusCode());
+            ctx.res().setStatus(e.getStatusCode());
             ctx.json(new ApiException(e.getStatusCode(), e.getLocalizedMessage()));
         } catch (NotAuthorizedException e) {
-            ctx.status(e.getStatusCode());
+            ctx.res().setStatus(e.getStatusCode());
             ctx.json(new NotAuthorizedException(e.getStatusCode(), e.getMessage()));
         }
     };

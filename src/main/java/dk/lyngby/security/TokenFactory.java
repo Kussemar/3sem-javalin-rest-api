@@ -38,6 +38,7 @@ public class TokenFactory {
 
     private String returnSecretKey() {
         boolean isDeployed = (System.getenv("DEPLOYED") != null);
+        System.out.println("isDeployed: " + isDeployed);
         if(isDeployed) {
             return System.getenv("SECRET_KEY");
         }

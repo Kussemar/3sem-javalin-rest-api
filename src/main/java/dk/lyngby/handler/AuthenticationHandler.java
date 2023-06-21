@@ -17,18 +17,18 @@ public class AuthenticationHandler {
                 String token = ctx.header("Authorization").split(" ")[1];
 
                 if (token == null) {
-                    throw new NotAuthorizedException(HttpStatus.UNAUTHORIZED.getCode(), "No token provided");
+                    throw new NotAuthorizedException(401, "No token provided");
                 }
 
                 UserDTO userDTO = TOKEN_FACTORY.verifyToken(token);
                 if (userDTO == null) {
-                    throw new ApiException("Invalid token", HttpStatus.UNAUTHORIZED.getCode());
+                    throw new ApiException(401, "Invalid token");
                 }
 
                 ctx.attribute("user", userDTO);
 
             } catch (NullPointerException e) {
-                throw new NotAuthorizedException(HttpStatus.UNAUTHORIZED.getCode(), "No token provided");
+                throw new NotAuthorizedException(401, "No token provided");
             }
     };
 }
