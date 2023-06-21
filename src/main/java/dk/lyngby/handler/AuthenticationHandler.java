@@ -5,7 +5,6 @@ import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.exceptions.NotAuthorizedException;
 import dk.lyngby.security.TokenFactory;
 import io.javalin.http.Handler;
-import io.javalin.http.HttpStatus;
 
 public class AuthenticationHandler {
 
