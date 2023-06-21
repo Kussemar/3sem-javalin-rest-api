@@ -40,6 +40,7 @@ public class TokenFactory {
         boolean isDeployed = (System.getenv("DEPLOYED") != null);
         System.out.println("isDeployed: " + isDeployed);
         if(isDeployed) {
+            System.out.println("SECRET_KEY (returnSecretKey: " + System.getenv("SECRET_KEY"));
             return System.getenv("SECRET_KEY");
         }
         return "841D8A6C80CBA4FCAD32D5367C18C53B";
@@ -56,7 +57,9 @@ public class TokenFactory {
 
         if (isDeployed) {
             ISSUER = System.getenv("ISSUER");
+            System.out.println("ISSUER: " + ISSUER);
             TOKEN_EXPIRE_TIME = System.getenv("TOKEN_EXPIRE_TIME");
+            System.out.println("TOKEN_EXPIRE_TIME: " + TOKEN_EXPIRE_TIME);
         } else {
             ISSUER = "cphbusiness.dk";
             TOKEN_EXPIRE_TIME = "1800000";
@@ -98,6 +101,8 @@ public class TokenFactory {
     public String[] parseJsonObject(String jsonString, Boolean tryLogin) throws ApiException {
         try {
             List<String> roles = Arrays.asList("user", "admin");
+            System.out.println("jsonString: " + jsonString);
+            System.out.println("roles: " + roles);
             JsonObject json = JsonParser.parseString(jsonString).getAsJsonObject();
             String username = json.get("username").getAsString();
             String password = json.get("password").getAsString();
@@ -109,6 +114,7 @@ public class TokenFactory {
             }
 
             return new String[]{username, password, role};
+
         } catch (JsonSyntaxException | NullPointerException e) {
             throw new ApiException(400, "Malformed JSON Supplied", e);
         } catch (ApiException e) {
