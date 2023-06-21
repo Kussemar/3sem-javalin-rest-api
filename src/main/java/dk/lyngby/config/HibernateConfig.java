@@ -20,7 +20,6 @@ public class HibernateConfig {
         try {
             Configuration configuration = new Configuration();
 
-
             Properties props = new Properties();
 
             boolean isDeployed = (System.getenv("DEPLOYED") != null);

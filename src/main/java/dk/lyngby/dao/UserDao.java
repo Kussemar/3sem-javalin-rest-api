@@ -3,6 +3,7 @@ package dk.lyngby.dao;
 import dk.lyngby.exceptions.NotAuthorizedException;
 import dk.lyngby.model.Role;
 import dk.lyngby.model.User;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 public class UserDao {
@@ -23,22 +24,22 @@ public class UserDao {
 
     public User getVerifiedUser(String username, String password) throws NotAuthorizedException{
 
-        try(var session = sessionFactory.openSession()){
-            var transaction = session.beginTransaction();
-            var user = session.get(User.class, username);
+        try(Session session = sessionFactory.openSession()){
+            session.beginTransaction();
+            User user = session.get(User.class, username);
             if(user == null || !user.verifyPassword(password)){
                 throw new NotAuthorizedException(401, "Invalid user name or password");
             }
-            transaction.commit();
+            session.getTransaction().commit();
             return user;
         }
     }
 
     public User createUser(String username, String password, String user_role) throws NotAuthorizedException {
-        try(var session = sessionFactory.openSession()){
-            var transaction = session.beginTransaction();
-            var user = new User(username, password);
-            var role = session.get(Role.class, user_role);
+        try(Session session = sessionFactory.openSession()){
+            session.beginTransaction();
+            User user = new User(username, password);
+            Role role = session.get(Role.class, user_role);
 
             if(role == null){
                 role = createRole(user_role);
@@ -46,7 +47,7 @@ public class UserDao {
 
             user.addRole(role);
             session.persist(user);
-            transaction.commit();
+            session.getTransaction().commit();
             return user;
         } catch (Exception e) {
             throw new NotAuthorizedException(400, "Username already exists");
@@ -54,11 +55,11 @@ public class UserDao {
     }
 
     public Role createRole(String role){
-        try(var session = sessionFactory.openSession()){
-            var transaction = session.beginTransaction();
-            var newRole = new Role(role);
+        try(Session session = sessionFactory.openSession()){
+            session.beginTransaction();
+            Role newRole = new Role(role);
             session.persist(newRole);
-            transaction.commit();
+            session.getTransaction().commit();
             return newRole;
         }
     }
