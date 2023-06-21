@@ -23,26 +23,18 @@ public class RegisterHandler {
     public Handler register = ctx -> {
         try {
             String request = ctx.body();
-            System.out.println("request: " + request);
             String[] userInfos = TOKEN_FACTORY.parseJsonObject(request, false);
-
             User user = USER_DAO.createUser(userInfos[0], userInfos[1], userInfos[2]);
-            System.out.println("user: " + user);
             String token = TOKEN_FACTORY.createToken(userInfos[0], user.getRolesAsStrings());
-            System.out.println("token: " + token);
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("username", userInfos[0]);
             responseJson.addProperty("token", token);
             ctx.status(201);
             ctx.result(responseJson.toString());
         } catch (ApiException e) {
-            ctx.status(e.getStatusCode());
-            System.out.println("ApiException: " + e.getStatusCode());
-            ctx.json(new ApiException(e.getStatusCode(), e.getMessage()));
+            throw new ApiException(e.getStatusCode(), e.getLocalizedMessage());
         } catch (NotAuthorizedException e) {
-            ctx.status(e.getStatusCode());
-            System.out.println("NotAuthorizedException: " + e.getStatusCode());
-            ctx.json(new NotAuthorizedException(e.getStatusCode(), e.getMessage()));
+            throw new NotAuthorizedException(e.getStatusCode(), e.getMessage());
         }
     };
 }

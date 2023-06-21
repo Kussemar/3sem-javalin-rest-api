@@ -16,7 +16,7 @@ public class PersonRoutes {
 
         return () -> {
             path("/person", () -> {
-                before("/", authenticationHandler.authenticate);
+                //before("/", authenticationHandler.authenticate);
                 post("/", personHandler.createPerson);
                 get("/", personHandler.getAllPersons);
                 get("{id}", personHandler.getPersonById);

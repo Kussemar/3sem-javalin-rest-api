@@ -38,9 +38,8 @@ public class TokenFactory {
 
     private String returnSecretKey() {
         boolean isDeployed = (System.getenv("DEPLOYED") != null);
-        System.out.println("isDeployed: " + isDeployed);
+
         if(isDeployed) {
-            System.out.println("SECRET_KEY (returnSecretKey: " + System.getenv("SECRET_KEY"));
             return System.getenv("SECRET_KEY");
         }
         return "841D8A6C80CBA4FCAD32D5367C18C53B";
@@ -53,13 +52,10 @@ public class TokenFactory {
         String TOKEN_EXPIRE_TIME;
 
         boolean isDeployed = (System.getenv("DEPLOYED") != null);
-        System.out.println("isDeployed Token Factory: " + isDeployed);
 
         if (isDeployed) {
             ISSUER = System.getenv("ISSUER");
-            System.out.println("ISSUER: " + ISSUER);
             TOKEN_EXPIRE_TIME = System.getenv("TOKEN_EXPIRE_TIME");
-            System.out.println("TOKEN_EXPIRE_TIME: " + TOKEN_EXPIRE_TIME);
         } else {
             ISSUER = "cphbusiness.dk";
             TOKEN_EXPIRE_TIME = "1800000";
@@ -143,9 +139,9 @@ public class TokenFactory {
             return new UserDTO(username, rolesArray);
 
         } catch (RuntimeException | ParseException | BadJOSEException | JOSEException e) {
-            throw new ApiException(401, e.getMessage());
+            throw new ApiException(401, e.getMessage(), e);
         } catch (NotAuthorizedException e) {
-            throw new NotAuthorizedException(401, e.getMessage());
+            throw new NotAuthorizedException(401, e.getMessage(), e);
         }
     }
 }

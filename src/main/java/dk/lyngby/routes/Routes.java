@@ -19,17 +19,15 @@ public class Routes {
                 path("/", personRoutes.getRoutes());
             });
             app.exception(ApiException.class, (e, ctx) -> {
-                ctx.status(e.getStatusCode());
-                System.out.println("ApiException: Routes" + e.getStatusCode());
+                ctx.res().setStatus(e.getStatusCode());
                 ctx.json(new ApiException( e.getStatusCode(), e.getMessage()));
             });
             app.exception(NotAuthorizedException.class, (e, ctx) -> {
-                ctx.status(e.getStatusCode());
-                System.out.println("NotAuthorizedException: Routes" + e.getStatusCode());
+                ctx.res().setStatus(e.getStatusCode());
                 ctx.json(new NotAuthorizedException(e.getStatusCode(), e.getMessage()));
             });
             app.exception(Exception.class, (e, ctx) -> {
-                ctx.status(500);
+                ctx.res().setStatus(500);
                 ctx.json(new Exception(e.getMessage()));
             });
             app.after(ctx -> {
