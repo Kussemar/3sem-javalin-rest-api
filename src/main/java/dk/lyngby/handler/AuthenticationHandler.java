@@ -16,11 +16,8 @@ public class AuthenticationHandler {
             try{
                 String token = ctx.header("Authorization").split(" ")[1];
 
-                if (token == null) {
-                    throw new NotAuthorizedException(401, "No token provided");
-                }
-
                 UserDTO userDTO = TOKEN_FACTORY.verifyToken(token);
+
                 if (userDTO == null) {
                     throw new ApiException(401, "Invalid token");
                 }

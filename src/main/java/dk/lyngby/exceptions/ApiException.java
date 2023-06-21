@@ -21,11 +21,6 @@ public class ApiException extends Exception{
         this.statusCode = statusCode;
     }
 
-    public ApiException(String message, int statusCode) {
-        super(message);
-        this.statusCode = statusCode;
-    }
-
     public int getStatusCode() {
         return statusCode;
     }

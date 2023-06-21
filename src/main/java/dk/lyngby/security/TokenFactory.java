@@ -90,7 +90,7 @@ public class TokenFactory {
 
             return jweObject.serialize();
         } catch (JOSEException e) {
-            throw new ApiException(500, "Could not create token", e);
+            throw new ApiException(500, "Could not create token");
         }
     }
 
@@ -112,9 +112,9 @@ public class TokenFactory {
             return new String[]{username, password, role};
 
         } catch (JsonSyntaxException | NullPointerException e) {
-            throw new ApiException(400, "Malformed JSON Supplied", e);
+            throw new ApiException(400, "Malformed JSON Supplied");
         } catch (ApiException e) {
-            throw new ApiException(400, e.getMessage(), e);
+            throw new ApiException(400, e.getMessage());
         }
     }
 
@@ -139,9 +139,9 @@ public class TokenFactory {
             return new UserDTO(username, rolesArray);
 
         } catch (RuntimeException | ParseException | BadJOSEException | JOSEException e) {
-            throw new ApiException(401, e.getMessage(), e);
+            throw new ApiException(401, e.getMessage());
         } catch (NotAuthorizedException e) {
-            throw new NotAuthorizedException(401, e.getMessage(), e);
+            throw new NotAuthorizedException(401, e.getMessage());
         }
     }
 }
