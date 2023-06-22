@@ -97,8 +97,6 @@ public class TokenFactory {
     public String[] parseJsonObject(String jsonString, Boolean tryLogin) throws ApiException {
         try {
             List<String> roles = Arrays.asList("user", "admin");
-            System.out.println("jsonString: " + jsonString);
-            System.out.println("roles: " + roles);
             JsonObject json = JsonParser.parseString(jsonString).getAsJsonObject();
             String username = json.get("username").getAsString();
             String password = json.get("password").getAsString();
@@ -106,15 +104,13 @@ public class TokenFactory {
 
             if (!tryLogin) {
                 role = json.get("role").getAsString();
-                if (!roles.contains(role)) throw new ApiException(500, "Role not valid");
+                if (!roles.contains(role)) throw new ApiException(400, "Role not valid");
             }
 
             return new String[]{username, password, role};
 
         } catch (JsonSyntaxException | NullPointerException e) {
             throw new ApiException(400, "Malformed JSON Supplied");
-        } catch (ApiException e) {
-            throw new ApiException(400, e.getMessage());
         }
     }
 
@@ -140,8 +136,6 @@ public class TokenFactory {
 
         } catch (RuntimeException | ParseException | BadJOSEException | JOSEException e) {
             throw new ApiException(401, e.getMessage());
-        } catch (NotAuthorizedException e) {
-            throw new NotAuthorizedException(401, e.getMessage());
         }
     }
 }

@@ -21,7 +21,6 @@ public class LoginHandler {
     }
 
     public Handler login = ctx -> {
-        try {
             String request = ctx.body();
             String[] userInfos = TOKEN_FACTORY.parseJsonObject(request, true);
             User user = USER_DAO.getVerifiedUser(userInfos[0], userInfos[1]);
@@ -30,11 +29,6 @@ public class LoginHandler {
             responseJson.addProperty("username", userInfos[0]);
             responseJson.addProperty("token", token);
             ctx.result(responseJson.toString());
-        } catch (ApiException e) {
-            throw new ApiException(e.getStatusCode(), e.getMessage());
-        } catch (NotAuthorizedException e) {
-            throw new NotAuthorizedException(e.getStatusCode(), e.getMessage());
-        }
     };
 
 }

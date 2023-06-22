@@ -21,7 +21,6 @@ public class RegisterHandler {
     }
 
     public Handler register = ctx -> {
-        try {
             String request = ctx.body();
             String[] userInfos = TOKEN_FACTORY.parseJsonObject(request, false);
             User user = USER_DAO.createUser(userInfos[0], userInfos[1], userInfos[2]);
@@ -29,12 +28,7 @@ public class RegisterHandler {
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("username", userInfos[0]);
             responseJson.addProperty("token", token);
-            ctx.status(201);
+            ctx.res().setStatus(201);
             ctx.result(responseJson.toString());
-        } catch (ApiException e) {
-            throw new ApiException(e.getStatusCode(), e.getLocalizedMessage());
-        } catch (NotAuthorizedException e) {
-            throw new NotAuthorizedException(e.getStatusCode(), e.getMessage());
-        }
     };
 }
