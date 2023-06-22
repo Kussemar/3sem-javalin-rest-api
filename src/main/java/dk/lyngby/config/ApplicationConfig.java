@@ -10,7 +10,7 @@ public class ApplicationConfig {
     public static void configurations(JavalinConfig config) {
         // logging
         if (System.getenv("DEPLOYED") == null) {
-            config.plugins.enableDevLogging(); // enables extensive development logging in terminal
+            //config.plugins.enableDevLogging(); // enables extensive development logging in terminal
         }
 
         // http
