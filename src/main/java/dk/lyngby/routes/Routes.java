@@ -5,7 +5,6 @@ import dk.lyngby.exceptions.NotAuthorizedException;
 import dk.lyngby.handler.ExceptionHandler;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.EndpointGroup;
-import io.javalin.http.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

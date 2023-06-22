@@ -1,5 +1,6 @@
 package dk.lyngby.config;
 
+import dk.lyngby.routes.Routes;
 import io.javalin.Javalin;
 import io.javalin.config.JavalinConfig;
 
@@ -7,7 +8,9 @@ public class ApplicationConfig {
 
     public static void configurations(JavalinConfig config) {
         // logging
-        config.plugins.enableDevLogging(); // enables extensive development logging in terminal
+        if(System.getenv("DEPLOYED") == null) {
+            config.plugins.enableDevLogging(); // enables extensive development logging in terminal
+        }
 
         // http
         config.http.defaultContentType = "application/json"; // default content type for requests
@@ -26,6 +29,9 @@ public class ApplicationConfig {
     }
 
     public static void startServer(Javalin app, int port) {
+        Routes routes = new Routes();
+        app.updateConfig(ApplicationConfig::configurations);
+        app.routes(routes.getRoutes(app));
         HibernateConfig.setTest(false);
         app.start(port);
     }

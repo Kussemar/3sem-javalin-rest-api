@@ -40,11 +40,11 @@
     </appender>
 
     <logger name="org.postgresql.*" level="INFO"/>
-    <logger name="org.hibernate.type" level="ALL" />
-    <logger name="org.hibernate" level="DEBUG" />
-    <logger name="com.zaxxer.hikari.pool.PoolBase" level="INFO"/>
-    <logger name="com.zaxxer.hikari.pool.HikariPool" level="INFO"/>
-    <logger name="com.zaxxer.hikari.HikariDataSource" level="INFO"/>
+<!--    <logger name="org.hibernate.type" level="ALL" />-->
+<!--    <logger name="org.hibernate" level="DEBUG" />-->
+<!--    <logger name="com.zaxxer.hikari.pool.PoolBase" level="INFO"/>-->
+<!--    <logger name="com.zaxxer.hikari.pool.HikariPool" level="INFO"/>-->
+<!--    <logger name="com.zaxxer.hikari.HikariDataSource" level="INFO"/>-->
 
     <logger name="dk.lyngby.routes" level="ERROR">
         <appender-ref ref="FILE"/>

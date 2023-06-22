@@ -3,6 +3,7 @@ package dk.lyngby.handler;
 import dk.lyngby.CreateLoginData;
 import dk.lyngby.LoginToken;
 import dk.lyngby.Main;
+import dk.lyngby.config.ApplicationConfig;
 import dk.lyngby.config.HibernateConfig;
 import dk.lyngby.model.Person;
 import io.javalin.Javalin;
@@ -20,7 +21,7 @@ class PersonHandlerTest {
     @BeforeAll
     static void setUpAll() {
         HibernateConfig.setTest(true);
-        Main.main(new String[]{"7777"});
+        ApplicationConfig.startServer(Javalin.create(), 7777);
         CreateLoginData.createLoginData(sessionFactory.openSession());
         adminToken = LoginToken.getAdminToken();
         userToken =  LoginToken.getUserToken();
@@ -29,7 +30,7 @@ class PersonHandlerTest {
     @AfterAll
     static void tearDownAll() {
         HibernateConfig.setTest(false);
-        Javalin.create().stop();
+        ApplicationConfig.stopServer(Javalin.create());
     }
 
     @BeforeEach
