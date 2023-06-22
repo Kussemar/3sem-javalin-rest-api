@@ -4,7 +4,6 @@ import dk.lyngby.CreateLoginData;
 import dk.lyngby.LoginToken;
 import dk.lyngby.Main;
 import dk.lyngby.config.HibernateConfig;
-import dk.lyngby.dao.PersonDAO;
 import dk.lyngby.model.Person;
 import io.javalin.Javalin;
 import org.hibernate.Session;

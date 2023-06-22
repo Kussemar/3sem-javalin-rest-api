@@ -2,7 +2,6 @@ package dk.lyngby.exceptions;
 
 public class NotAuthorizedException extends Exception {
     private final int statusCode;
-    private Object object;
 
     public NotAuthorizedException(int statusCode, String message) {
         super(message);
@@ -15,9 +14,5 @@ public class NotAuthorizedException extends Exception {
 
     public int getStatusCode() {
         return statusCode;
-    }
-
-    public Object getObject() {
-        return object;
     }
 }
