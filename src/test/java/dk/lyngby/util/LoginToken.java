@@ -1,4 +1,4 @@
-package dk.lyngby;
+package dk.lyngby.util;
 
 import static io.restassured.RestAssured.given;
 

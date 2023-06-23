@@ -34,9 +34,7 @@ public class Routes {
             app.exception(ApiException.class, exceptionHandler::exceptionHandlerApi);
             app.exception(NotAuthorizedException.class, exceptionHandler::exceptionHandlerNotAuthorized);
             app.exception(Exception.class, exceptionHandler::exceptionHandler);
-            app.after(ctx -> {
-                LOGGER.info("{}. Request {} was handled with status code {}", count++, ctx.attribute("requestInfo"), ctx.status());
-            });
+            app.after(ctx -> LOGGER.info(" Request {} - {} was handled with status code {}", count++, ctx.attribute("requestInfo"), ctx.status()));
         };
     }
 }

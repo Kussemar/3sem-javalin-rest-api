@@ -1,20 +1,24 @@
 package dk.lyngby.config;
 
+import dk.lyngby.handler.AccessManagerHandler;
 import dk.lyngby.routes.Routes;
 import io.javalin.Javalin;
 import io.javalin.config.JavalinConfig;
 import io.javalin.plugin.bundled.RouteOverviewPlugin;
 
+
 public class ApplicationConfig {
+
+    private static final AccessManagerHandler ACCESS_MANAGER_HANDLER = new AccessManagerHandler();
 
     public static void configurations(JavalinConfig config) {
         // logging
-        if (System.getenv("DEPLOYED") == null) {
-            //config.plugins.enableDevLogging(); // enables extensive development logging in terminal
-        }
+        if (System.getenv("DEPLOYED") == null)
+            config.plugins.enableDevLogging(); // enables extensive development logging in terminal
 
         // http
         config.http.defaultContentType = "application/json"; // default content type for requests
+        config.compression.brotliAndGzip(); // enable brotli and gzip compression of responses
 
         // cors
         config.accessManager((handler, ctx, permittedRoles) -> {
@@ -25,12 +29,17 @@ public class ApplicationConfig {
             handler.handle(ctx);
         });
 
+        // access management roles allowed for routes (see AccessManagerHandler)
+        config.accessManager(ACCESS_MANAGER_HANDLER::accessManagerHandler);
+
         // routing
         config.routing.contextPath = "/api/v1"; // base path for all routes
+        config.routing.ignoreTrailingSlashes = true; // removes trailing slashes for all routes
 
         // Route overview
         config.plugins.register(new RouteOverviewPlugin("/routes")); // enables route overview at /routes
     }
+
 
     public static void startServer(Javalin app, int port) {
         Routes routes = new Routes();

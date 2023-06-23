@@ -1,4 +1,4 @@
-package dk.lyngby;
+package dk.lyngby.util;
 
 import dk.lyngby.model.Role;
 import dk.lyngby.model.User;
@@ -9,6 +9,7 @@ public class CreateLoginData {
 
         User user = new User("usertest", "user123");
         User admin = new User("admintest", "admin123");
+        User superuser = new User("superusertest", "superuser123");
 
         Role userRole = new Role("user");
         Role adminRole = new Role("admin");

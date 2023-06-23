@@ -3,6 +3,7 @@ package dk.lyngby.config;
 import dk.lyngby.model.Person;
 import dk.lyngby.model.Role;
 import dk.lyngby.model.User;
+import dk.lyngby.util.Variables;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -33,9 +34,9 @@ public class HibernateConfig {
                 props.setProperty("hibernate.connection.username", DB_USERNAME);
                 props.setProperty("hibernate.connection.password", DB_PASSWORD);
             } else {
-                props.put("hibernate.connection.url", "jdbc:postgresql://localhost:5432/projectdb");
-                props.put("hibernate.connection.username", "dev");
-                props.put("hibernate.connection.password", "ax2");
+                props.put("hibernate.connection.url", Variables.DB_CONNECTION_STRING);
+                props.put("hibernate.connection.username", Variables.DB_USERNAME);
+                props.put("hibernate.connection.password", Variables.DB_PASSWORD);
                 props.put("hibernate.show_sql", "true"); // show sql in console
                 props.put("hibernate.format_sql", "true"); // format sql in console
                 props.put("hibernate.use_sql_comments", "true"); // show sql comments in console

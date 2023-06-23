@@ -17,6 +17,7 @@ import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import dk.lyngby.dto.UserDTO;
 import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.exceptions.NotAuthorizedException;
+import dk.lyngby.util.Variables;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -42,7 +43,7 @@ public class TokenFactory {
         if(isDeployed) {
             return System.getenv("SECRET_KEY");
         }
-        return "841D8A6C80CBA4FCAD32D5367C18C53B";
+        return Variables.SECRET_KEY.getValue();
     }
 
     public String createToken(String userName, Set<String> roles) throws ApiException {
@@ -57,8 +58,8 @@ public class TokenFactory {
             ISSUER = System.getenv("ISSUER");
             TOKEN_EXPIRE_TIME = System.getenv("TOKEN_EXPIRE_TIME");
         } else {
-            ISSUER = "cphbusiness.dk";
-            TOKEN_EXPIRE_TIME = "1800000";
+            ISSUER = Variables.ISSUER.getValue();
+            TOKEN_EXPIRE_TIME = Variables.TOKEN_EXPIRE_TIME.getValue();
         }
 
         try {

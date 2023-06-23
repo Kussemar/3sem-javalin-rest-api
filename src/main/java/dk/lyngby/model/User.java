@@ -55,20 +55,12 @@ public class User implements Serializable {
         return userName;
     }
 
-    public String getUserPass() {
-        return userPass;
-    }
-
     public void setUserPass(String userPass) {
         this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt());
     }
 
     public void addRole(Role userRole) {
         roleList.add(userRole);
-    }
-
-    public Set<Role> getRoles() {
-        return roleList;
     }
 
 }

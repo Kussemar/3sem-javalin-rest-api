@@ -1,8 +1,7 @@
 package dk.lyngby.handler;
 
-import dk.lyngby.CreateLoginData;
-import dk.lyngby.LoginToken;
-import dk.lyngby.Main;
+import dk.lyngby.util.CreateLoginData;
+import dk.lyngby.util.LoginToken;
 import dk.lyngby.config.ApplicationConfig;
 import dk.lyngby.config.HibernateConfig;
 import dk.lyngby.model.Person;

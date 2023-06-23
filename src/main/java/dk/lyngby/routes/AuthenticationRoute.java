@@ -15,8 +15,8 @@ public class AuthenticationRoute {
 
         return () -> {
             path("/auth", () -> {
-                post("/login", loginHandler.login);
-                post("/register", registerHandler.register);
+                post("/login", loginHandler::login);
+                post("/register", registerHandler::register);
             });
         };
     }

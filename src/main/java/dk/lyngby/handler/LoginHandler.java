@@ -7,12 +7,12 @@ import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.exceptions.NotAuthorizedException;
 import dk.lyngby.model.User;
 import dk.lyngby.security.TokenFactory;
-import io.javalin.http.Handler;
+import io.javalin.http.Context;
 import org.hibernate.SessionFactory;
 
 public class LoginHandler {
 
-    private UserDao USER_DAO;
+    private final UserDao USER_DAO;
     private final TokenFactory TOKEN_FACTORY = TokenFactory.getInstance();
 
     public LoginHandler() {
@@ -20,7 +20,7 @@ public class LoginHandler {
         USER_DAO = UserDao.getInstance(sessionFactory);
     }
 
-    public Handler login = ctx -> {
+    public void login(Context ctx) throws ApiException, NotAuthorizedException {
             String request = ctx.body();
             String[] userInfos = TOKEN_FACTORY.parseJsonObject(request, true);
             User user = USER_DAO.getVerifiedUser(userInfos[0], userInfos[1]);
@@ -29,6 +29,5 @@ public class LoginHandler {
             responseJson.addProperty("username", userInfos[0]);
             responseJson.addProperty("token", token);
             ctx.result(responseJson.toString());
-    };
-
+    }
 }

@@ -33,8 +33,8 @@ public class UserDTO implements Principal {
         return username;
     }
 
-    public boolean isUserInRole(String role) {
-        return this.roles.contains(role);
+    public Set<String> getRoles() {
+        return roles;
     }
 
     @Override
