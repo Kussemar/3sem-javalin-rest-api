@@ -28,15 +28,14 @@ public class HibernateConfig {
             if(isDeployed) {
                 String DB_USERNAME = System.getenv("DB_USERNAME");
                 String DB_PASSWORD = System.getenv("DB_PASSWORD");
-                String DB_NAME = getDBName();
-                String CONNECTION_STR = System.getenv("CONNECTION_STR") + DB_NAME;
+                String CONNECTION_STR = System.getenv("CONNECTION_STR") + Variables.DB_NAME.getValue();
                 props.setProperty("hibernate.connection.url", CONNECTION_STR);
                 props.setProperty("hibernate.connection.username", DB_USERNAME);
                 props.setProperty("hibernate.connection.password", DB_PASSWORD);
             } else {
-                props.put("hibernate.connection.url", Variables.DB_CONNECTION_STRING);
-                props.put("hibernate.connection.username", Variables.DB_USERNAME);
-                props.put("hibernate.connection.password", Variables.DB_PASSWORD);
+                props.put("hibernate.connection.url", Variables.DB_CONNECTION_STRING.getValue() + Variables.DB_NAME.getValue());
+                props.put("hibernate.connection.username", Variables.DB_USERNAME.getValue());
+                props.put("hibernate.connection.password", Variables.DB_PASSWORD.getValue());
                 props.put("hibernate.show_sql", "true"); // show sql in console
                 props.put("hibernate.format_sql", "true"); // format sql in console
                 props.put("hibernate.use_sql_comments", "true"); // show sql comments in console
@@ -120,21 +119,5 @@ public class HibernateConfig {
 
     public static void setTest(Boolean test) {
         isTest = test;
-    }
-
-    public static Boolean getTest() {
-        return isTest;
-    }
-
-    private static String getDBName() {
-        Properties pomProperties;
-        InputStream is = HibernateConfig.class.getClassLoader().getResourceAsStream("properties-from-pom.properties");
-        pomProperties = new Properties();
-        try {
-            pomProperties.load(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return pomProperties.getProperty("db.name");
     }
 }
