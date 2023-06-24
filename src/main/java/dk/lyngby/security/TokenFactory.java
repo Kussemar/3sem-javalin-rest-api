@@ -27,6 +27,10 @@ import java.util.Set;
 
 public class TokenFactory {
     private static TokenFactory instance;
+    private static final boolean isDeployed = (System.getenv("DEPLOYED") != null);
+    private static final String ISSUER = isDeployed ? System.getenv("ISSUER") : Variables.ISSUER.getValue();
+    private static final String TOKEN_EXPIRE_TIME = isDeployed ? System.getenv("TOKEN_EXPIRE_TIME") : Variables.TOKEN_EXPIRE_TIME.getValue();
+    private static final String SECRET_KEY = isDeployed ? System.getenv("SECRET_KEY") : Variables.SECRET_KEY.getValue();
 
     private TokenFactory() {}
 
@@ -37,30 +41,7 @@ public class TokenFactory {
         return instance;
     }
 
-    private String returnSecretKey() {
-        boolean isDeployed = (System.getenv("DEPLOYED") != null);
-
-        if(isDeployed) {
-            return System.getenv("SECRET_KEY");
-        }
-        return Variables.SECRET_KEY.getValue();
-    }
-
     public String createToken(String userName, Set<String> roles) throws ApiException {
-
-        String ISSUER;
-        String SECRET_KEY = returnSecretKey();
-        String TOKEN_EXPIRE_TIME;
-
-        boolean isDeployed = (System.getenv("DEPLOYED") != null);
-
-        if (isDeployed) {
-            ISSUER = System.getenv("ISSUER");
-            TOKEN_EXPIRE_TIME = System.getenv("TOKEN_EXPIRE_TIME");
-        } else {
-            ISSUER = Variables.ISSUER.getValue();
-            TOKEN_EXPIRE_TIME = Variables.TOKEN_EXPIRE_TIME.getValue();
-        }
 
         try {
             StringBuilder res = new StringBuilder();
@@ -72,24 +53,7 @@ public class TokenFactory {
             String rolesAsString = res.length() > 0 ? res.substring(0, res.length() - 1) : "";
 
             Date date = new Date();
-            // https://dzone.com/articles/using-nimbus-jose-jwt-in-spring-applications-why-a
-            JWTClaimsSet claims = new JWTClaimsSet.Builder()
-                    .subject(userName)
-                    .issuer(ISSUER)
-                    .claim("username", userName)
-                    .claim("roles", rolesAsString)
-                    .expirationTime(new Date(date.getTime() + Integer.parseInt(TOKEN_EXPIRE_TIME)))
-                    .build();
-
-            Payload payload = new Payload(claims.toJSONObject());
-            JWEHeader header = new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A128CBC_HS256);
-
-            DirectEncrypter encrypter = new DirectEncrypter(SECRET_KEY.getBytes());
-
-            JWEObject jweObject = new JWEObject(header, payload);
-            jweObject.encrypt(encrypter);
-
-            return jweObject.serialize();
+            return encryptToken(userName, rolesAsString, date);
         } catch (JOSEException e) {
             throw new ApiException(500, "Could not create token");
         }
@@ -116,21 +80,14 @@ public class TokenFactory {
     }
 
     public UserDTO verifyToken(String token) throws ApiException, NotAuthorizedException {
-
-        String SECRET_KEY = returnSecretKey();
-
         try {
-            ConfigurableJWTProcessor<SimpleSecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
-            JWKSource<SimpleSecurityContext> jweKeySource = new ImmutableSecret<>(SECRET_KEY.getBytes());
-            JWEKeySelector<SimpleSecurityContext> jweKeySelector = new JWEDecryptionKeySelector<>(JWEAlgorithm.DIR, EncryptionMethod.A128CBC_HS256, jweKeySource);
-            jwtProcessor.setJWEKeySelector(jweKeySelector);
-            JWTClaimsSet claimsSet = jwtProcessor.process(token, null);
+            JWTClaimsSet claimsSet = decryptToken(token);
 
-            if (new Date().after(claimsSet.getExpirationTime())) throw new NotAuthorizedException(401, "Token is expired");
+            if (new Date().after(claimsSet.getExpirationTime()))
+                throw new NotAuthorizedException(401, "Token is expired");
 
             String username = claimsSet.getClaim("username").toString();
             String roles = claimsSet.getClaim("roles").toString();
-
             String[] rolesArray = roles.split(",");
 
             return new UserDTO(username, rolesArray);
@@ -138,5 +95,31 @@ public class TokenFactory {
         } catch (RuntimeException | ParseException | BadJOSEException | JOSEException e) {
             throw new ApiException(401, e.getMessage());
         }
+    }
+
+    private static String encryptToken(String userName, String rolesAsString, Date date) throws JOSEException {
+        // https://dzone.com/articles/using-nimbus-jose-jwt-in-spring-applications-why-a
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .subject(userName)
+                .issuer(ISSUER)
+                .claim("username", userName)
+                .claim("roles", rolesAsString)
+                .expirationTime(new Date(date.getTime() + Integer.parseInt(TOKEN_EXPIRE_TIME)))
+                .build();
+
+        Payload payload = new Payload(claims.toJSONObject());
+        JWEHeader header = new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A128CBC_HS256);
+        DirectEncrypter encrypt = new DirectEncrypter(SECRET_KEY.getBytes());
+        JWEObject jweObject = new JWEObject(header, payload);
+        jweObject.encrypt(encrypt);
+        return jweObject.serialize();
+    }
+
+    private static JWTClaimsSet decryptToken(String token) throws JOSEException, BadJOSEException, ParseException {
+        ConfigurableJWTProcessor<SimpleSecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
+        JWKSource<SimpleSecurityContext> jweKeySource = new ImmutableSecret<>(SECRET_KEY.getBytes());
+        JWEKeySelector<SimpleSecurityContext> jweKeySelector = new JWEDecryptionKeySelector<>(JWEAlgorithm.DIR, EncryptionMethod.A128CBC_HS256, jweKeySource);
+        jwtProcessor.setJWEKeySelector(jweKeySelector);
+        return jwtProcessor.process(token, null);
     }
 }

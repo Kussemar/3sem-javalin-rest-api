@@ -19,14 +19,22 @@ public class Routes {
     private final ExceptionHandler exceptionHandler = new ExceptionHandler();
     private int count = 0;
 
-    public void getRequestInfo(Context ctx) {
+    private void getRequestInfo(Context ctx) {
         String requestInfo = ctx.req().getMethod() + " " + ctx.req().getRequestURI();
         ctx.attribute("requestInfo", requestInfo);
+    }
+
+    private void getCors(Context ctx) {
+        ctx.header("Access-Control-Allow-Origin", "*");
+        ctx.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        ctx.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        ctx.header("Access-Control-Allow-Credentials", "true");
     }
 
     public EndpointGroup getRoutes(Javalin app) {
         return () -> {
             app.before(this::getRequestInfo);
+            app.before(this::getCors);
             app.routes(() -> {
                 path("/", authenticationRoutes.getRoutes());
                 path("/", personRoutes.getRoutes());

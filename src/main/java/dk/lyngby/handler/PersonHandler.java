@@ -6,28 +6,27 @@ import dk.lyngby.dto.PersonDTO;
 import dk.lyngby.dto.UserDTO;
 import dk.lyngby.model.Person;
 import io.javalin.http.Context;
-import io.javalin.http.Handler;
 import org.hibernate.SessionFactory;
 
 import java.util.List;
 
 public class PersonHandler {
 
-    private PersonDAO personDao;
+    private final PersonDAO personDao;
 
     public PersonHandler() {
         SessionFactory sessionFactory = HibernateConfig.getSessionConfigFactory();
         personDao = PersonDAO.getInstance(sessionFactory);
     }
 
-    public Handler createPerson = ctx -> {
+    public void createPerson(Context ctx) {
         ctx.res().setStatus(201);
         Person person = personDao.create(validatePerson(ctx).toPerson());
-        PersonDTO personDTO = new PersonDTO(person);
-        ctx.json(personDTO, PersonDTO.class);
-    };
+        PersonDTO personDTO = new PersonDTO();
+        ctx.json(personDTO.getPersonWithId(person.getId(), person));
+    }
 
-    public Handler getAllPersons = ctx -> {
+    public void getAllPersons(Context ctx) {
         ctx.res().setStatus(200);
         List<Person> persons = personDao.readAll();
         List<PersonDTO> personDTOS = PersonDTO.toPersonDTOs(persons);
@@ -36,30 +35,30 @@ public class PersonHandler {
         System.out.println(user);
 
         ctx.json(personDTOS, PersonDTO.class);
-    };
+    }
 
-    public Handler getPersonById = ctx -> {
+    public void getPersonById(Context ctx){
         ctx.res().setStatus(200);
         int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateID, "Not a valid id").get();
         Person person = personDao.read(id);
         PersonDTO personDTO = new PersonDTO(person);
         ctx.json(personDTO, PersonDTO.class);
-    };
+    }
 
-    public Handler updatePersonById = ctx -> {
+    public void updatePersonById(Context ctx) {
         ctx.res().setStatus(200);
         int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateID, "Not a valid id").get();
-        Person update = personDao.update(validatePerson(ctx).toPerson(), id);
+        Person update = personDao.update(id, validatePerson(ctx).toPerson());
         PersonDTO personDTO = new PersonDTO(update);
         ctx.json(personDTO, PersonDTO.class);
-    };
+    }
 
-    public Handler deletePersonById = ctx -> {
+    public void deletePersonById(Context ctx) {
         ctx.res().setStatus(200);
         int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateID, "Not a valid id").get();
         personDao.delete(id);
         ctx.json(new Message(200, "Person with id " + id + " deleted"), Message.class);
-    };
+    }
 
     private boolean validateID(int number) {
         return personDao.validateID(number);

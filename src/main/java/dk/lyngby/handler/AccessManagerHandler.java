@@ -15,7 +15,6 @@ public class AccessManagerHandler {
 
     private final TokenFactory TOKEN_FACTORY = TokenFactory.getInstance();
 
-    // Roles Allowed for routes
     public void accessManagerHandler(Handler handler, Context ctx, Set<? extends RouteRole> permittedRoles) throws Exception {
         String path = ctx.path();
         boolean isAuthorized = false;
@@ -40,7 +39,7 @@ public class AccessManagerHandler {
         }
     }
 
-    public RouteRole[] getUserRole(Context ctx) throws NotAuthorizedException, ApiException {
+    private RouteRole[] getUserRole(Context ctx) throws NotAuthorizedException, ApiException {
         String token = ctx.header("Authorization").split(" ")[1];
         UserDTO userDTO = TOKEN_FACTORY.verifyToken(token);
 
@@ -51,21 +50,4 @@ public class AccessManagerHandler {
         return userDTO.getRoles().stream().map(r -> RouteRoles.valueOf(r.toUpperCase())).toArray(RouteRole[]::new);
     }
 
-    // this handler can be used in connection with before() to authenticate a user
-    public void beforeAuthenticateHandler(Context ctx) throws NotAuthorizedException, ApiException {
-
-        try {
-            String token = ctx.header("Authorization").split(" ")[1];
-            UserDTO userDTO = TOKEN_FACTORY.verifyToken(token);
-
-            if (userDTO == null) {
-                throw new ApiException(401, "Invalid token");
-            }
-
-            ctx.attribute("user", userDTO);
-
-        } catch (NullPointerException e) {
-            throw new NotAuthorizedException(401, "No token provided");
-        }
-    }
 }

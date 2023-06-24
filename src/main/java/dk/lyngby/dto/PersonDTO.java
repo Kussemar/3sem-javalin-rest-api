@@ -3,7 +3,9 @@ package dk.lyngby.dto;
 import dk.lyngby.model.Person;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PersonDTO {
 
@@ -21,11 +23,11 @@ public class PersonDTO {
         this.email = person.getEmail();
     }
 
-    public PersonDTO(String firstName, String lastName, int age, String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.age = age;
-        this.email = email;
+    public Map<String, Object> getPersonWithId(int id, Person person) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("id", id);
+        result.put("person", new PersonDTO(person));
+        return result;
     }
 
     public static List<PersonDTO> toPersonDTOs(List<Person> personList) {

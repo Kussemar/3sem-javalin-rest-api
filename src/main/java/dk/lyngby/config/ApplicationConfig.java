@@ -20,21 +20,12 @@ public class ApplicationConfig {
         config.http.defaultContentType = "application/json"; // default content type for requests
         config.compression.brotliAndGzip(); // enable brotli and gzip compression of responses
 
-        // cors
-        config.accessManager((handler, ctx, permittedRoles) -> {
-            ctx.header("Access-Control-Allow-Origin", "*");
-            ctx.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-            ctx.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-            ctx.header("Access-Control-Allow-Credentials", "true");
-            handler.handle(ctx);
-        });
-
-        // access management roles allowed for routes (see AccessManagerHandler)
-        config.accessManager(ACCESS_MANAGER_HANDLER::accessManagerHandler);
-
         // routing
         config.routing.contextPath = "/api/v1"; // base path for all routes
         config.routing.ignoreTrailingSlashes = true; // removes trailing slashes for all routes
+
+        // access management roles allowed for routes (see AccessManagerHandler)
+        config.accessManager(ACCESS_MANAGER_HANDLER::accessManagerHandler);
 
         // Route overview
         config.plugins.register(new RouteOverviewPlugin("/routes")); // enables route overview at /routes

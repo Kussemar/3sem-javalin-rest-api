@@ -1,5 +1,6 @@
 package dk.lyngby.dao;
 
+import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.model.Person;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -58,19 +59,20 @@ public class PersonDAO {
         return null;
     }
 
-    public Person update(Person updatedPerson, int id) {
+    public Person update(int id, Person person) {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
-            Person person = session.get(Person.class, id);
-            person.setFirstName(updatedPerson.getFirstName());
-            person.setLastName(updatedPerson.getLastName());
-            person.setAge(updatedPerson.getAge());
+            Person _person = session.get(Person.class, id);
+            _person.setFirstName(person.getFirstName());
+            _person.setLastName(person.getLastName());
+            _person.setAge(person.getAge());
             session.getTransaction().commit();
+            return session.merge(person);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return updatedPerson;
+        return null;
     }
 
     public void delete(int id) {
