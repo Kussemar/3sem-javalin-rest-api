@@ -3,7 +3,6 @@ package dk.lyngby.config;
 import dk.lyngby.model.Person;
 import dk.lyngby.model.Role;
 import dk.lyngby.model.User;
-import dk.lyngby.util.Variables;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -26,14 +25,14 @@ public class HibernateConfig {
             if(isDeployed) {
                 String DB_USERNAME = System.getenv("DB_USERNAME");
                 String DB_PASSWORD = System.getenv("DB_PASSWORD");
-                String CONNECTION_STR = System.getenv("CONNECTION_STR") + Variables.DB_NAME.getValue();
+                String CONNECTION_STR = System.getenv("CONNECTION_STR") + ApplicationConfig.getProperty("db.name");
                 props.setProperty("hibernate.connection.url", CONNECTION_STR);
                 props.setProperty("hibernate.connection.username", DB_USERNAME);
                 props.setProperty("hibernate.connection.password", DB_PASSWORD);
             } else {
-                props.put("hibernate.connection.url", Variables.DB_CONNECTION_STRING.getValue() + Variables.DB_NAME.getValue());
-                props.put("hibernate.connection.username", Variables.DB_USERNAME.getValue());
-                props.put("hibernate.connection.password", Variables.DB_PASSWORD.getValue());
+                props.put("hibernate.connection.url", ApplicationConfig.getProperty("db.connection.string") + ApplicationConfig.getProperty("db.name"));
+                props.put("hibernate.connection.username", ApplicationConfig.getProperty("db.username"));
+                props.put("hibernate.connection.password", ApplicationConfig.getProperty("db.password"));
                 props.put("hibernate.show_sql", "true"); // show sql in console
                 props.put("hibernate.format_sql", "true"); // format sql in console
                 props.put("hibernate.use_sql_comments", "true"); // show sql comments in console

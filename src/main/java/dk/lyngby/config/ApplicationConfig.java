@@ -5,6 +5,10 @@ import dk.lyngby.routes.Routes;
 import io.javalin.Javalin;
 import io.javalin.config.JavalinConfig;
 import io.javalin.plugin.bundled.RouteOverviewPlugin;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 
 
 public class ApplicationConfig {
@@ -31,6 +35,16 @@ public class ApplicationConfig {
         config.plugins.register(new RouteOverviewPlugin("/routes")); // enables route overview at /routes
     }
 
+    public static String getProperty(String propName) throws IOException {
+        try (InputStream is = HibernateConfig.class.getClassLoader().getResourceAsStream("properties-from-pom.properties")) {
+            Properties prop = new Properties();
+            prop.load(is);
+            return prop.getProperty(propName);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            throw new IOException("Could not read property from pom file");
+        }
+    }
 
     public static void startServer(Javalin app, int port) {
         Routes routes = new Routes();
@@ -43,4 +57,5 @@ public class ApplicationConfig {
     public static void stopServer(Javalin app) {
         app.stop();
     }
+
 }

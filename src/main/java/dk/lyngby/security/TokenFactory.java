@@ -4,21 +4,16 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.nimbusds.jose.*;
-import com.nimbusds.jose.crypto.DirectEncrypter;
-import com.nimbusds.jose.jwk.source.ImmutableSecret;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.proc.BadJOSEException;
-import com.nimbusds.jose.proc.JWEDecryptionKeySelector;
-import com.nimbusds.jose.proc.JWEKeySelector;
-import com.nimbusds.jose.proc.SimpleSecurityContext;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
-import com.nimbusds.jwt.proc.DefaultJWTProcessor;
+import com.nimbusds.jwt.SignedJWT;
+import dk.lyngby.config.ApplicationConfig;
 import dk.lyngby.dto.UserDTO;
 import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.exceptions.AuthorizationException;
-import dk.lyngby.util.Variables;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
@@ -28,9 +23,17 @@ import java.util.Set;
 public class TokenFactory {
     private static TokenFactory instance;
     private static final boolean isDeployed = (System.getenv("DEPLOYED") != null);
-    private static final String ISSUER = isDeployed ? System.getenv("ISSUER") : Variables.ISSUER.getValue();
-    private static final String TOKEN_EXPIRE_TIME = isDeployed ? System.getenv("TOKEN_EXPIRE_TIME") : Variables.TOKEN_EXPIRE_TIME.getValue();
-    private static final String SECRET_KEY = isDeployed ? System.getenv("SECRET_KEY") : Variables.SECRET_KEY.getValue();
+    private static final String ISSUER, TOKEN_EXPIRE_TIME, SECRET_KEY;
+
+    static {
+        try {
+            ISSUER = isDeployed ? System.getenv("ISSUER") : ApplicationConfig.getProperty("issuer");
+            TOKEN_EXPIRE_TIME = isDeployed ? System.getenv("TOKEN_EXPIRE_TIME") : ApplicationConfig.getProperty("token.expiration.time");
+            SECRET_KEY = isDeployed ? System.getenv("SECRET_KEY") : ApplicationConfig.getProperty("secret.key");
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 
     private TokenFactory() {}
 
@@ -53,7 +56,7 @@ public class TokenFactory {
             String rolesAsString = res.length() > 0 ? res.substring(0, res.length() - 1) : "";
 
             Date date = new Date();
-            return encryptToken(userName, rolesAsString, date);
+            return signToken(userName, rolesAsString, date);
         } catch (JOSEException e) {
             throw new ApiException(500, "Could not create token");
         }
@@ -81,7 +84,15 @@ public class TokenFactory {
 
     public UserDTO verifyToken(String token) throws ApiException, AuthorizationException {
         try {
-            JWTClaimsSet claimsSet = decryptToken(token);
+            SignedJWT signedJWT = SignedJWT.parse(token);
+
+            JWSVerifier verifier = new MACVerifier(SECRET_KEY.getBytes());
+
+            if (!signedJWT.verify(verifier)) {
+                throw new AuthorizationException(401, "Invalid token signature");
+            }
+
+            JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
 
             if (new Date().after(claimsSet.getExpirationTime()))
                 throw new AuthorizationException(401, "Token is expired");
@@ -92,12 +103,12 @@ public class TokenFactory {
 
             return new UserDTO(username, rolesArray);
 
-        } catch (RuntimeException | ParseException | BadJOSEException | JOSEException e) {
+        } catch (ParseException | JOSEException e) {
             throw new ApiException(401, e.getMessage());
         }
     }
 
-    private static String encryptToken(String userName, String rolesAsString, Date date) throws JOSEException {
+    private static String signToken(String userName, String rolesAsString, Date date) throws JOSEException {
         // https://dzone.com/articles/using-nimbus-jose-jwt-in-spring-applications-why-a
         JWTClaimsSet claims = new JWTClaimsSet.Builder()
                 .subject(userName)
@@ -107,26 +118,18 @@ public class TokenFactory {
                 .expirationTime(new Date(date.getTime() + Integer.parseInt(TOKEN_EXPIRE_TIME)))
                 .build();
 
-
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
         Payload payload = new Payload(claims.toJSONObject());
-        JWEHeader header = new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A128CBC_HS256);
-        byte[] secretKey = SECRET_KEY.getBytes();
-        DirectEncrypter encrypt = new DirectEncrypter(secretKey);
-        JWEObject jweObject = new JWEObject(header, payload);
-        jweObject.encrypt(encrypt);
-        return jweObject.serialize();
-    }
 
-    private static JWTClaimsSet decryptToken(String token) throws JOSEException, BadJOSEException, ParseException {
-        ConfigurableJWTProcessor<SimpleSecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
-        JWKSource<SimpleSecurityContext> jweKeySource = new ImmutableSecret<>(SECRET_KEY.getBytes());
-        JWEKeySelector<SimpleSecurityContext> jweKeySelector = new JWEDecryptionKeySelector<>(JWEAlgorithm.DIR, EncryptionMethod.A128CBC_HS256, jweKeySource);
-        jwtProcessor.setJWEKeySelector(jweKeySelector);
-        return jwtProcessor.process(token, null);
-    }
+        JWSObject jwsObject = new JWSObject(header, payload);
 
-    public static void main(String[] args) throws BadJOSEException, ParseException, JOSEException {
-        JWTClaimsSet jwtClaimsSet = decryptToken("eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..ayArIv96Oxjr1Q_ImP5Fjw.PPwKemnf7K5uhFxuaTlhZ_-5bSvO2uv8R35c5u8PzNyVtGTx1tiAaRp-3lnMcWqXZvX1dZoNcvkhzuqQizSGC5ZHNkQ4urdM_RNj9k6Q2HQLR1nwslnuW8-WYO768yW7fyFdK7QPMuhDO-_CHDeKMw.SM1Jbm_9BfwmdECEgJvfAw");
-        System.out.println(jwtClaimsSet);
+        try {
+            JWSSigner signer = new MACSigner(SECRET_KEY.getBytes());
+            jwsObject.sign(signer);
+        } catch (JOSEException e) {
+            throw new RuntimeException("Signing failed", e);
+        }
+
+        return jwsObject.serialize();
     }
 }

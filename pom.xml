@@ -17,8 +17,18 @@
         <testcontainers.version>1.18.0</testcontainers.version>
         <junit.version>5.9.1</junit.version>
 
-        <!-- DATABASE PROJECT NAME ON SERVER  -->
+        <!-- Project properties  -->
+        <!--  token    -->
+        <secret.key>841D8A6C80CBA4FCAD32D5367C18C53B</secret.key>
+        <issuer>cphbusiness.dk</issuer>
+        <token.expiration.time>3600000</token.expiration.time>
+        <!--  DB    -->
         <db.name>projectdb</db.name>
+        <db.username>dev</db.username>
+        <db.password>ax2</db.password>
+        <db.connection.string>jdbc:postgresql://localhost:5432/</db.connection.string>
+        <!--  Javalin    -->
+        <javalin.port>7070</javalin.port>
     </properties>
     <dependencies>
 
