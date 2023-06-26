@@ -16,7 +16,7 @@ import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import dk.lyngby.dto.UserDTO;
 import dk.lyngby.exceptions.ApiException;
-import dk.lyngby.exceptions.NotAuthorizedException;
+import dk.lyngby.exceptions.AuthorizationException;
 import dk.lyngby.util.Variables;
 
 import java.text.ParseException;
@@ -79,12 +79,12 @@ public class TokenFactory {
         }
     }
 
-    public UserDTO verifyToken(String token) throws ApiException, NotAuthorizedException {
+    public UserDTO verifyToken(String token) throws ApiException, AuthorizationException {
         try {
             JWTClaimsSet claimsSet = decryptToken(token);
 
             if (new Date().after(claimsSet.getExpirationTime()))
-                throw new NotAuthorizedException(401, "Token is expired");
+                throw new AuthorizationException(401, "Token is expired");
 
             String username = claimsSet.getClaim("username").toString();
             String roles = claimsSet.getClaim("roles").toString();
@@ -107,9 +107,11 @@ public class TokenFactory {
                 .expirationTime(new Date(date.getTime() + Integer.parseInt(TOKEN_EXPIRE_TIME)))
                 .build();
 
+
         Payload payload = new Payload(claims.toJSONObject());
         JWEHeader header = new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A128CBC_HS256);
-        DirectEncrypter encrypt = new DirectEncrypter(SECRET_KEY.getBytes());
+        byte[] secretKey = SECRET_KEY.getBytes();
+        DirectEncrypter encrypt = new DirectEncrypter(secretKey);
         JWEObject jweObject = new JWEObject(header, payload);
         jweObject.encrypt(encrypt);
         return jweObject.serialize();
@@ -121,5 +123,10 @@ public class TokenFactory {
         JWEKeySelector<SimpleSecurityContext> jweKeySelector = new JWEDecryptionKeySelector<>(JWEAlgorithm.DIR, EncryptionMethod.A128CBC_HS256, jweKeySource);
         jwtProcessor.setJWEKeySelector(jweKeySelector);
         return jwtProcessor.process(token, null);
+    }
+
+    public static void main(String[] args) throws BadJOSEException, ParseException, JOSEException {
+        JWTClaimsSet jwtClaimsSet = decryptToken("eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..ayArIv96Oxjr1Q_ImP5Fjw.PPwKemnf7K5uhFxuaTlhZ_-5bSvO2uv8R35c5u8PzNyVtGTx1tiAaRp-3lnMcWqXZvX1dZoNcvkhzuqQizSGC5ZHNkQ4urdM_RNj9k6Q2HQLR1nwslnuW8-WYO768yW7fyFdK7QPMuhDO-_CHDeKMw.SM1Jbm_9BfwmdECEgJvfAw");
+        System.out.println(jwtClaimsSet);
     }
 }

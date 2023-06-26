@@ -1,8 +1,9 @@
 package dk.lyngby.routes;
 
 import dk.lyngby.exceptions.ApiException;
-import dk.lyngby.exceptions.NotAuthorizedException;
+import dk.lyngby.exceptions.AuthorizationException;
 import dk.lyngby.handler.ExceptionHandler;
+import dk.lyngby.handler.Message;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.EndpointGroup;
 import io.javalin.http.Context;
@@ -19,12 +20,12 @@ public class Routes {
     private final ExceptionHandler exceptionHandler = new ExceptionHandler();
     private int count = 0;
 
-    private void getRequestInfo(Context ctx) {
+    private void requestInfoHandler(Context ctx) {
         String requestInfo = ctx.req().getMethod() + " " + ctx.req().getRequestURI();
         ctx.attribute("requestInfo", requestInfo);
     }
 
-    private void getCors(Context ctx) {
+    private void corsHandler(Context ctx) {
         ctx.header("Access-Control-Allow-Origin", "*");
         ctx.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         ctx.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -33,16 +34,20 @@ public class Routes {
 
     public EndpointGroup getRoutes(Javalin app) {
         return () -> {
-            app.before(this::getRequestInfo);
-            app.before(this::getCors);
+            app.before(this::requestInfoHandler);
+            app.before(this::corsHandler);
             app.routes(() -> {
                 path("/", authenticationRoutes.getRoutes());
                 path("/", personRoutes.getRoutes());
             });
-            app.exception(ApiException.class, exceptionHandler::exceptionHandlerApi);
-            app.exception(NotAuthorizedException.class, exceptionHandler::exceptionHandlerNotAuthorized);
-            app.exception(Exception.class, exceptionHandler::exceptionHandler);
+            app.error(404, ctx -> {
+                ctx.json(new Message(404, "Not found"));
+                ctx.status(404);
+            });
             app.after(ctx -> LOGGER.info(" Request {} - {} was handled with status code {}", count++, ctx.attribute("requestInfo"), ctx.status()));
+            app.exception(ApiException.class, exceptionHandler::exceptionHandlerApi);
+            app.exception(AuthorizationException.class, exceptionHandler::exceptionHandlerNotAuthorized);
+            app.exception(Exception.class, exceptionHandler::exceptionHandler);
         };
     }
 }

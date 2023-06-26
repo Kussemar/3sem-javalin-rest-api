@@ -1,9 +1,9 @@
 package dk.lyngby.exceptions;
 
-public class NotAuthorizedException extends Exception {
+public class AuthorizationException extends Exception {
     private final int statusCode;
 
-    public NotAuthorizedException(int statusCode, String message) {
+    public AuthorizationException(int statusCode, String message) {
         super(message);
         this.statusCode = statusCode;
     }

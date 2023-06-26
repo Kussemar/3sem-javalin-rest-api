@@ -2,7 +2,7 @@ package dk.lyngby.handler;
 
 import dk.lyngby.dto.UserDTO;
 import dk.lyngby.exceptions.ApiException;
-import dk.lyngby.exceptions.NotAuthorizedException;
+import dk.lyngby.exceptions.AuthorizationException;
 import dk.lyngby.routes.RouteRoles;
 import dk.lyngby.security.TokenFactory;
 import io.javalin.http.Context;
@@ -35,11 +35,11 @@ public class AccessManagerHandler {
         if (isAuthorized) {
             handler.handle(ctx);
         } else {
-            throw new NotAuthorizedException(401, "Not authorized");
+            throw new AuthorizationException(401, "Not authorized");
         }
     }
 
-    private RouteRole[] getUserRole(Context ctx) throws NotAuthorizedException, ApiException {
+    private RouteRole[] getUserRole(Context ctx) throws AuthorizationException, ApiException {
         String token = ctx.header("Authorization").split(" ")[1];
         UserDTO userDTO = TOKEN_FACTORY.verifyToken(token);
 

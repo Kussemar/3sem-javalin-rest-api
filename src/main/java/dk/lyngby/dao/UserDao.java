@@ -1,6 +1,6 @@
 package dk.lyngby.dao;
 
-import dk.lyngby.exceptions.NotAuthorizedException;
+import dk.lyngby.exceptions.AuthorizationException;
 import dk.lyngby.model.Role;
 import dk.lyngby.model.User;
 import org.hibernate.Session;
@@ -22,20 +22,20 @@ public class UserDao {
         return instance;
     }
 
-    public User getVerifiedUser(String username, String password) throws NotAuthorizedException{
+    public User getVerifiedUser(String username, String password) throws AuthorizationException {
 
         try(Session session = sessionFactory.openSession()){
             session.beginTransaction();
             User user = session.get(User.class, username);
             if(user == null || !user.verifyPassword(password)){
-                throw new NotAuthorizedException(401, "Invalid user name or password");
+                throw new AuthorizationException(401, "Invalid user name or password");
             }
             session.getTransaction().commit();
             return user;
         }
     }
 
-    public User createUser(String username, String password, String user_role) throws NotAuthorizedException {
+    public User createUser(String username, String password, String user_role) throws AuthorizationException {
         try(Session session = sessionFactory.openSession()){
             session.beginTransaction();
             User user = new User(username, password);
@@ -50,7 +50,7 @@ public class UserDao {
             session.getTransaction().commit();
             return user;
         } catch (Exception e) {
-            throw new NotAuthorizedException(400, "Username already exists");
+            throw new AuthorizationException(400, "Username already exists");
         }
     }
 

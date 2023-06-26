@@ -4,6 +4,7 @@ import dk.lyngby.config.HibernateConfig;
 import dk.lyngby.dao.PersonDAO;
 import dk.lyngby.dto.PersonDTO;
 import dk.lyngby.dto.UserDTO;
+import dk.lyngby.handler.Message;
 import dk.lyngby.model.Person;
 import io.javalin.http.Context;
 import org.hibernate.SessionFactory;

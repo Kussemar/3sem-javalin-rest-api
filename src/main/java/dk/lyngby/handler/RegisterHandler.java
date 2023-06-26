@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import dk.lyngby.config.HibernateConfig;
 import dk.lyngby.dao.UserDao;
 import dk.lyngby.exceptions.ApiException;
-import dk.lyngby.exceptions.NotAuthorizedException;
+import dk.lyngby.exceptions.AuthorizationException;
 import dk.lyngby.model.User;
 import dk.lyngby.security.TokenFactory;
 import io.javalin.http.Context;
@@ -20,7 +20,7 @@ public class RegisterHandler {
         USER_DAO = UserDao.getInstance(sessionFactory);
     }
 
-    public void register(Context ctx) throws ApiException, NotAuthorizedException {
+    public void register(Context ctx) throws ApiException, AuthorizationException {
             String request = ctx.body();
             String[] userInfos = TOKEN_FACTORY.parseJsonObject(request, false);
             User user = USER_DAO.createUser(userInfos[0], userInfos[1], userInfos[2]);
