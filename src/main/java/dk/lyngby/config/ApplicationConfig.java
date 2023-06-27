@@ -1,6 +1,6 @@
 package dk.lyngby.config;
 
-import dk.lyngby.handler.AccessManagerHandler;
+import dk.lyngby.security.handler.AccessManagerHandler;
 import dk.lyngby.routes.Routes;
 import io.javalin.Javalin;
 import io.javalin.config.JavalinConfig;
@@ -42,7 +42,7 @@ public class ApplicationConfig {
             return prop.getProperty(propName);
         } catch (IOException ex) {
             ex.printStackTrace();
-            throw new IOException("Could not read property from pom file");
+            throw new IOException("Could not read property from pom file. Build Maven!");
         }
     }
 

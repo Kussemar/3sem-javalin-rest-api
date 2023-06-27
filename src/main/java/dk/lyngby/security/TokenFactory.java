@@ -12,6 +12,8 @@ import dk.lyngby.config.ApplicationConfig;
 import dk.lyngby.dto.UserDTO;
 import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.exceptions.AuthorizationException;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -20,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TokenFactory {
     private static TokenFactory instance;
     private static final boolean isDeployed = (System.getenv("DEPLOYED") != null);
@@ -34,8 +37,6 @@ public class TokenFactory {
             throw new RuntimeException(e.getMessage());
         }
     }
-
-    private TokenFactory() {}
 
     public static TokenFactory getInstance() {
         if (instance == null) {
@@ -62,6 +63,16 @@ public class TokenFactory {
         }
     }
 
+    public UserDTO verifyToken(String token) throws ApiException, AuthorizationException {
+        try {
+            SignedJWT signedJWT = parseTokenAndVerify(token);
+            JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
+            return getJWTClaimsSet(claimsSet);
+        } catch (ParseException | JOSEException e) {
+            throw new ApiException(401, e.getMessage());
+        }
+    }
+
     public String[] parseJsonObject(String jsonString, Boolean tryLogin) throws ApiException {
         try {
             List<String> roles = Arrays.asList("user", "admin");
@@ -82,54 +93,55 @@ public class TokenFactory {
         }
     }
 
-    public UserDTO verifyToken(String token) throws ApiException, AuthorizationException {
-        try {
-            SignedJWT signedJWT = SignedJWT.parse(token);
+    private UserDTO getJWTClaimsSet(JWTClaimsSet claimsSet) throws AuthorizationException {
 
-            JWSVerifier verifier = new MACVerifier(SECRET_KEY.getBytes());
+        if (new Date().after(claimsSet.getExpirationTime()))
+            throw new AuthorizationException(401, "Token is expired");
 
-            if (!signedJWT.verify(verifier)) {
-                throw new AuthorizationException(401, "Invalid token signature");
-            }
+        String username = claimsSet.getClaim("username").toString();
+        String roles = claimsSet.getClaim("roles").toString();
+        String[] rolesArray = roles.split(",");
 
-            JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
-
-            if (new Date().after(claimsSet.getExpirationTime()))
-                throw new AuthorizationException(401, "Token is expired");
-
-            String username = claimsSet.getClaim("username").toString();
-            String roles = claimsSet.getClaim("roles").toString();
-            String[] rolesArray = roles.split(",");
-
-            return new UserDTO(username, rolesArray);
-
-        } catch (ParseException | JOSEException e) {
-            throw new ApiException(401, e.getMessage());
-        }
+        return new UserDTO(username, rolesArray);
     }
 
-    private static String signToken(String userName, String rolesAsString, Date date) throws JOSEException {
-        // https://dzone.com/articles/using-nimbus-jose-jwt-in-spring-applications-why-a
-        JWTClaimsSet claims = new JWTClaimsSet.Builder()
-                .subject(userName)
+    private SignedJWT parseTokenAndVerify(String token) throws ParseException, JOSEException, AuthorizationException {
+        SignedJWT signedJWT = SignedJWT.parse(token);
+        JWSVerifier verifier = new MACVerifier(SECRET_KEY.getBytes());
+
+        if (!signedJWT.verify(verifier)) {
+            throw new AuthorizationException(401, "Invalid token signature");
+        }
+        return signedJWT;
+    }
+
+    private String signToken(String userName, String rolesAsString, Date date) throws JOSEException {
+        JWTClaimsSet claims = createClaims(userName, rolesAsString, date);
+        JWSObject jwsObject = createHeaderAndPayload(claims);
+        return signTokenWithSecretKey(jwsObject);
+    }
+
+    private JWTClaimsSet createClaims(String username, String rolesAsString, Date date) {
+        return new JWTClaimsSet.Builder()
+                .subject(username)
                 .issuer(ISSUER)
-                .claim("username", userName)
+                .claim("username", username)
                 .claim("roles", rolesAsString)
                 .expirationTime(new Date(date.getTime() + Integer.parseInt(TOKEN_EXPIRE_TIME)))
                 .build();
+    }
 
-        JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
-        Payload payload = new Payload(claims.toJSONObject());
+    private JWSObject createHeaderAndPayload(JWTClaimsSet claimsSet) {
+        return new JWSObject(new JWSHeader(JWSAlgorithm.HS256), new Payload(claimsSet.toJSONObject()));
+    }
 
-        JWSObject jwsObject = new JWSObject(header, payload);
-
+    private String signTokenWithSecretKey(JWSObject jwsObject) {
         try {
-            JWSSigner signer = new MACSigner(SECRET_KEY.getBytes());
+            JWSSigner signer = new MACSigner(TokenFactory.SECRET_KEY.getBytes());
             jwsObject.sign(signer);
+            return jwsObject.serialize();
         } catch (JOSEException e) {
             throw new RuntimeException("Signing failed", e);
         }
-
-        return jwsObject.serialize();
     }
 }

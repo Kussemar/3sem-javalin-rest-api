@@ -1,6 +1,7 @@
 package dk.lyngby.routes;
 
 import dk.lyngby.handler.PersonHandler;
+import dk.lyngby.security.RouteRoles;
 import io.javalin.apibuilder.EndpointGroup;
 
 import static io.javalin.apibuilder.ApiBuilder.*;

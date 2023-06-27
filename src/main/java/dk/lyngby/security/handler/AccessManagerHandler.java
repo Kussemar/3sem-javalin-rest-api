@@ -1,9 +1,9 @@
-package dk.lyngby.handler;
+package dk.lyngby.security.handler;
 
 import dk.lyngby.dto.UserDTO;
 import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.exceptions.AuthorizationException;
-import dk.lyngby.routes.RouteRoles;
+import dk.lyngby.security.RouteRoles;
 import dk.lyngby.security.TokenFactory;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;

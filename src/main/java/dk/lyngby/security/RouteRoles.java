@@ -1,4 +1,4 @@
-package dk.lyngby.routes;
+package dk.lyngby.security;
 
 public enum RouteRoles implements io.javalin.security.RouteRole {
     ANYONE("anyone"), USER("user"), ADMIN("admin");

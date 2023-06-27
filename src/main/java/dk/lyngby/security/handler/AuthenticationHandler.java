@@ -1,4 +1,4 @@
-package dk.lyngby.handler;
+package dk.lyngby.security.handler;
 
 import dk.lyngby.dto.UserDTO;
 import dk.lyngby.exceptions.ApiException;

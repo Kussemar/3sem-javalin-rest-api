@@ -20,13 +20,11 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_BASEDIR}/${LOG_FILE}.log</file>
         <encoder>
-            <pattern>%d{ISO8601} [%thread] %highlight(%-5level) %cyan(%logger{36}) - %green(%msg%n)</pattern>
+            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
         </encoder>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- daily rollover -->
             <fileNamePattern>${LOG_BASEDIR}/${LOG_FILE}.%d{yyyy-MM-dd}.gz</fileNamePattern>
-            <!-- keep 30 days' worth of history capped at 3GB total size -->
             <maxHistory>${LOG_FILE_MAX_HISTORY}</maxHistory>
             <totalSizeCap>${LOG_FILE_MAX_SIZE}</totalSizeCap>
         </rollingPolicy>
@@ -40,12 +38,12 @@
         </filter>
     </appender>
 
-<!--    <logger name="org.postgresql.*" level="INFO"/>-->
-<!--    <logger name="org.hibernate.type" level="ALL" />-->
-<!--    <logger name="org.hibernate" level="DEBUG" />-->
-<!--    <logger name="com.zaxxer.hikari.pool.PoolBase" level="INFO"/>-->
-<!--    <logger name="com.zaxxer.hikari.pool.HikariPool" level="INFO"/>-->
-<!--    <logger name="com.zaxxer.hikari.HikariDataSource" level="INFO"/>-->
+    <!--    <logger name="org.postgresql.*" level="INFO"/>-->
+    <!--    <logger name="org.hibernate.type" level="ALL" />-->
+    <!--    <logger name="org.hibernate" level="DEBUG" />-->
+    <!--    <logger name="com.zaxxer.hikari.pool.PoolBase" level="INFO"/>-->
+    <!--    <logger name="com.zaxxer.hikari.pool.HikariPool" level="INFO"/>-->
+    <!--    <logger name="com.zaxxer.hikari.HikariDataSource" level="INFO"/>-->
 
     <logger name="dk.lyngby.routes" level="INFO" additivity="false">
         <appender-ref ref="CONSOLE"/>

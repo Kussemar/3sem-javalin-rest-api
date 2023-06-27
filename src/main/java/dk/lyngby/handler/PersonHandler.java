@@ -6,6 +6,7 @@ import dk.lyngby.dto.PersonIdDTO;
 import dk.lyngby.dto.PersonDTO;
 import dk.lyngby.dto.UserDTO;
 import dk.lyngby.exceptions.ApiException;
+import dk.lyngby.exceptions.Message;
 import dk.lyngby.model.Person;
 import io.javalin.http.Context;
 import org.hibernate.SessionFactory;
@@ -22,8 +23,11 @@ public class PersonHandler {
     }
 
     public void createPerson(Context ctx) throws ApiException {
+        // request
         ctx.res().setStatus(201);
+        // entity
         Person person = personDao.create(validatePerson(ctx).toPerson());
+        // dto
         PersonDTO personDTO = new PersonDTO(person);
         ctx.json(personDTO, PersonDTO.class);
     }

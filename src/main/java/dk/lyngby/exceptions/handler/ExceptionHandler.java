@@ -1,7 +1,8 @@
-package dk.lyngby.handler;
+package dk.lyngby.exceptions.handler;
 
 import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.exceptions.AuthorizationException;
+import dk.lyngby.exceptions.Message;
 import dk.lyngby.routes.Routes;
 import io.javalin.http.Context;
 import org.slf4j.Logger;
