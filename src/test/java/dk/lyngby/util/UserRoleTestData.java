@@ -3,11 +3,12 @@ package dk.lyngby.util;
 import dk.lyngby.config.HibernateConfig;
 import dk.lyngby.model.Role;
 import dk.lyngby.model.User;
-import org.hibernate.SessionFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 public class UserRoleTestData {
 
-    static SessionFactory sessionFactory = HibernateConfig.getSessionConfigFactory();
+    static EntityManagerFactory emf = HibernateConfig.getEntityManagerFactory();
 
     public static void main(String[] args) {
         User user = new User("usertest", "user123");
@@ -22,18 +23,16 @@ public class UserRoleTestData {
         superuser.addRole(userRole);
         superuser.addRole(adminRole);
 
-        try {
-            sessionFactory.getCurrentSession().beginTransaction();
-            sessionFactory.getCurrentSession().createNamedQuery("Role.deleteAllRows", Role.class).executeUpdate();
-            sessionFactory.getCurrentSession().createNamedQuery("User.deleteAllRows", User.class).executeUpdate();
-            sessionFactory.getCurrentSession().persist(userRole);
-            sessionFactory.getCurrentSession().persist(adminRole);
-            sessionFactory.getCurrentSession().persist(user);
-            sessionFactory.getCurrentSession().persist(admin);
-            sessionFactory.getCurrentSession().persist(superuser);
-            sessionFactory.getCurrentSession().getTransaction().commit();
-        } finally {
-            sessionFactory.getCurrentSession().close();
-        }
+        try(EntityManager em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+            em.createNamedQuery("Role.deleteAllRows", Role.class).executeUpdate();
+            em.createNamedQuery("User.deleteAllRows", User.class).executeUpdate();
+            em.persist(userRole);
+            em.persist(adminRole);
+            em.persist(user);
+            em.persist(admin);
+            em.persist(superuser);
+            em.getTransaction().commit();
+        };
     }
 }

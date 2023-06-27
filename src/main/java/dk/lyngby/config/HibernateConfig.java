@@ -3,6 +3,8 @@ package dk.lyngby.config;
 import dk.lyngby.model.Person;
 import dk.lyngby.model.Role;
 import dk.lyngby.model.User;
+import jakarta.persistence.EntityManagerFactory;
+import lombok.NoArgsConstructor;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -10,11 +12,12 @@ import org.hibernate.service.ServiceRegistry;
 
 import java.util.Properties;
 
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class HibernateConfig {
-    private static SessionFactory sessionConfigFactory;
+    private static EntityManagerFactory entityManagerFactory;
     private static Boolean isTest = false;
 
-    private static SessionFactory buildSessionConfigFactoryDev() {
+    private static EntityManagerFactory buildEntityFactoryConfigDev() {
         try {
             Configuration configuration = new Configuration();
 
@@ -51,21 +54,14 @@ public class HibernateConfig {
             props.put("hibernate.hikari.maximumPoolSize", "20"); // Maximum time that a connection is allowed to sit ideal in the pool
             props.put("hibernate.hikari.idleTimeout", "200000"); // Maximum size of statements that has been prepared
 
-            configuration.setProperties(props);
-
-            getAnnotationConfiguration(configuration);
-
-            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
-            System.out.println("Hibernate Java Config serviceRegistry created");
-
-            return configuration.buildSessionFactory(serviceRegistry);
+            return getEntityManagerFactory(configuration, props);
         } catch (Throwable ex) {
             System.err.println("Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
         }
     }
 
-    private static SessionFactory buildSessionConfigFactoryTest() {
+    private static EntityManagerFactory buildEntityFactoryConfigTest() {
         try {
             Configuration configuration = new Configuration();
 
@@ -79,19 +75,25 @@ public class HibernateConfig {
             props.put("hibernate.show_sql", "true");
             props.put("hibernate.hbm2ddl.auto", "create-drop");
 
-            configuration.setProperties(props);
-
-            getAnnotationConfiguration(configuration);
-
-            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
-            System.out.println("Hibernate Java Config serviceRegistry created");
-
-            return configuration.buildSessionFactory(serviceRegistry);
+            return getEntityManagerFactory(configuration, props);
         } catch (Throwable ex) {
             System.err.println("Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
         }
     }
+
+    private static EntityManagerFactory getEntityManagerFactory(Configuration configuration, Properties props) {
+        configuration.setProperties(props);
+
+        getAnnotationConfiguration(configuration);
+
+        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
+        System.out.println("Hibernate Java Config serviceRegistry created");
+
+        SessionFactory sf = configuration.buildSessionFactory(serviceRegistry);
+        return sf.unwrap(EntityManagerFactory.class);
+    }
+
 
     private static void getAnnotationConfiguration(Configuration configuration) {
         configuration.addAnnotatedClass(Person.class);
@@ -99,19 +101,19 @@ public class HibernateConfig {
         configuration.addAnnotatedClass(Role.class);
     }
 
-    private static SessionFactory getSessionConfigFactoryDev() {
-        if (sessionConfigFactory == null) sessionConfigFactory = buildSessionConfigFactoryDev();
-        return sessionConfigFactory;
+    private static EntityManagerFactory getEntityManagerFactoryConfigDev() {
+        if (entityManagerFactory == null) entityManagerFactory = buildEntityFactoryConfigDev();
+        return entityManagerFactory;
     }
 
-    private static SessionFactory getSessionConfigFactoryTest() {
-        if (sessionConfigFactory == null) sessionConfigFactory = buildSessionConfigFactoryTest();
-        return sessionConfigFactory;
+    private static EntityManagerFactory getEntityManagerFactoryConfigTest() {
+        if (entityManagerFactory == null) entityManagerFactory = buildEntityFactoryConfigTest();
+        return entityManagerFactory;
     }
 
-    public static SessionFactory getSessionConfigFactory() {
-        if (isTest) return getSessionConfigFactoryTest();
-        return getSessionConfigFactoryDev();
+    public static EntityManagerFactory getEntityManagerFactory() {
+        if (isTest) return getEntityManagerFactoryConfigTest();
+        return getEntityManagerFactoryConfigDev();
     }
 
     public static void setTest(Boolean test) {

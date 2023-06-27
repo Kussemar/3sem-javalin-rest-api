@@ -8,7 +8,7 @@ import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.exceptions.Message;
 import dk.lyngby.model.Person;
 import io.javalin.http.Context;
-import org.hibernate.SessionFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 import java.util.List;
 
@@ -17,8 +17,8 @@ public class PersonHandler {
     private final PersonDAO personDao;
 
     public PersonHandler() {
-        SessionFactory sessionFactory = HibernateConfig.getSessionConfigFactory();
-        personDao = PersonDAO.getInstance(sessionFactory);
+        EntityManagerFactory emf= HibernateConfig.getEntityManagerFactory();
+        personDao = PersonDAO.getInstance(emf);
     }
 
     public void createPerson(Context ctx) throws ApiException {

@@ -8,7 +8,7 @@ import dk.lyngby.exceptions.AuthorizationException;
 import dk.lyngby.model.User;
 import dk.lyngby.security.TokenFactory;
 import io.javalin.http.Context;
-import org.hibernate.SessionFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 import java.util.Set;
 
@@ -18,8 +18,8 @@ public class UserHandler {
     private final TokenFactory TOKEN_FACTORY = TokenFactory.getInstance();
 
     public UserHandler() {
-        SessionFactory sessionFactory = HibernateConfig.getSessionConfigFactory();
-        USER_DAO = UserDao.getInstance(sessionFactory);
+        EntityManagerFactory emf = HibernateConfig.getEntityManagerFactory();
+        USER_DAO = UserDao.getInstance(emf);
     }
 
     public void login(Context ctx) throws ApiException, AuthorizationException {

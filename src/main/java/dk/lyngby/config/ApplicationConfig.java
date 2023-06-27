@@ -5,12 +5,14 @@ import dk.lyngby.routes.Routes;
 import io.javalin.Javalin;
 import io.javalin.config.JavalinConfig;
 import io.javalin.plugin.bundled.RouteOverviewPlugin;
+import lombok.NoArgsConstructor;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 
-
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class ApplicationConfig {
 
     private static final AccessManagerHandler ACCESS_MANAGER_HANDLER = new AccessManagerHandler();

@@ -8,7 +8,7 @@ import dk.lyngby.model.Person;
 import dk.lyngby.util.LoginToken;
 import dk.lyngby.util.TestData;
 import io.javalin.Javalin;
-import org.hibernate.SessionFactory;
+import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.*;
 
 import static io.restassured.RestAssured.given;
@@ -26,8 +26,8 @@ class PersonHandlerTest {
     static void setUpAll() {
         // Setup test database
         HibernateConfig.setTest(true);
-        SessionFactory sessionConfigFactoryTest = HibernateConfig.getSessionConfigFactory();
-        TestData.createUserTestData(sessionConfigFactoryTest);
+        EntityManagerFactory emfTest = HibernateConfig.getEntityManagerFactory();
+        TestData.createUserTestData(emfTest);
 
         // Start server
         app = Javalin.create();

@@ -4,7 +4,7 @@ import dk.lyngby.config.HibernateConfig;
 import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.model.Person;
 import dk.lyngby.util.TestData;
-import org.hibernate.SessionFactory;
+import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.*;
 
 import java.util.List;
@@ -14,19 +14,19 @@ import static org.junit.jupiter.api.Assertions.*;
 class PersonDAOTest {
 
     private static PersonDAO personDAO;
-    private static SessionFactory sessionConfigFactoryTest;
+    private static EntityManagerFactory emfTest;
 
     private int[] IDS;
     @BeforeEach
     void setUp() {
-        IDS = TestData.createPersonTestData(sessionConfigFactoryTest);
+        IDS = TestData.createPersonTestData(emfTest);
     }
 
     @BeforeAll
     static void setUpAll() {
         HibernateConfig.setTest(true);
-        sessionConfigFactoryTest = HibernateConfig.getSessionConfigFactory();
-        personDAO = PersonDAO.getInstance(sessionConfigFactoryTest);
+        emfTest = HibernateConfig.getEntityManagerFactory();
+        personDAO = PersonDAO.getInstance(emfTest);
     }
 
     @AfterAll

@@ -5,7 +5,7 @@ import dk.lyngby.exceptions.AuthorizationException;
 import dk.lyngby.model.Role;
 import dk.lyngby.model.User;
 import dk.lyngby.util.TestData;
-import org.hibernate.SessionFactory;
+import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -16,18 +16,18 @@ class UserDaoTest {
 
     private static UserDao userDao;
 
-    private static SessionFactory sessionConfigFactoryTest;
+    private static EntityManagerFactory emfTest;
 
     @BeforeEach
     void setUp() {
-        TestData.createUserTestData(sessionConfigFactoryTest);
+        TestData.createUserTestData(emfTest);
     }
 
     @BeforeAll
     static void setUpAll() {
         HibernateConfig.setTest(true);
-        sessionConfigFactoryTest = HibernateConfig.getSessionConfigFactory();
-        userDao = UserDao.getInstance(sessionConfigFactoryTest);
+        emfTest = HibernateConfig.getEntityManagerFactory();
+        userDao = UserDao.getInstance(emfTest);
     }
 
     @AfterAll
@@ -40,7 +40,7 @@ class UserDaoTest {
     void getInstance() {
 
         // given
-        UserDao expected = UserDao.getInstance(sessionConfigFactoryTest);
+        UserDao expected = UserDao.getInstance(emfTest);
 
         // when
         var actual = userDao;

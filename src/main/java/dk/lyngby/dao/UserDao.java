@@ -3,20 +3,19 @@ package dk.lyngby.dao;
 import dk.lyngby.exceptions.AuthorizationException;
 import dk.lyngby.model.Role;
 import dk.lyngby.model.User;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class UserDao {
 
     private static UserDao instance;
+    private static EntityManagerFactory emf;
 
-    private static SessionFactory sessionFactory;
-
-    private UserDao() {}
-
-    public static UserDao getInstance(SessionFactory _sessionFactory) {
+    public static UserDao getInstance(EntityManagerFactory _emf) {
         if (instance == null) {
-            sessionFactory = _sessionFactory;
+            emf = _emf;
             instance = new UserDao();
         }
         return instance;
@@ -24,33 +23,33 @@ public class UserDao {
 
     public User getVerifiedUser(String username, String password) throws AuthorizationException {
 
-        try(Session session = sessionFactory.openSession()){
-            session.beginTransaction();
-            User user = session.get(User.class, username);
+        try(EntityManager em = emf.createEntityManager()){
+            em.getTransaction().begin();
+            User user = em.find(User.class, username);
 
             if(user == null || !user.verifyPassword(password)){
                 throw new AuthorizationException(401, "Invalid user name or password");
             }
-            session.getTransaction().commit();
+            em.getTransaction().commit();
             return user;
         }
     }
 
     public User createUser(String username, String password, String user_role) throws AuthorizationException {
 
-        try(Session session = sessionFactory.openSession()){
-            session.beginTransaction();
+        try(EntityManager em = emf.createEntityManager()){
+            em.getTransaction().begin();
 
             User user = new User(username, password);
-            Role role = session.get(Role.class, user_role);
+            Role role = em.find(Role.class, user_role);
 
             if(role == null){
                 role = createRole(user_role);
             }
 
             user.addRole(role);
-            session.persist(user);
-            session.getTransaction().commit();
+            em.persist(user);
+            em.getTransaction().commit();
             return user;
         } catch (Exception e) {
             throw new AuthorizationException(400, "Username already exists");
@@ -58,11 +57,11 @@ public class UserDao {
     }
 
     public Role createRole(String role){
-        try(Session session = sessionFactory.openSession()){
-            session.beginTransaction();
+        try(EntityManager em = emf.createEntityManager()){
+            em.getTransaction().begin();
             Role newRole = new Role(role);
-            session.persist(newRole);
-            session.getTransaction().commit();
+            em.persist(newRole);
+            em.getTransaction().commit();
             return newRole;
         }
     }
