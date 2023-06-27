@@ -25,8 +25,9 @@ public class PersonHandler {
     public void createPerson(Context ctx) throws ApiException {
         // request
         ctx.res().setStatus(201);
+        PersonDTO jsonRequest = validatePerson(ctx);
         // entity
-        Person person = personDao.create(validatePerson(ctx).toPerson());
+        Person person = personDao.create(jsonRequest.toPerson());
         // dto
         PersonDTO personDTO = new PersonDTO(person);
         ctx.json(personDTO, PersonDTO.class);

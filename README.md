@@ -88,3 +88,23 @@ on:
         <javalin.port>port number</javalin.port>
     </properties>
 ```
+
+***
+
+## API Documentation
+
+### API Endpoints
+
+<img src="./utility/routes.png" alt="API endpoints">
+
+***
+
+### Request and Response Flow
+
+<img src="./utility/request_responds_flow.png" alt="Request and Response Flow">
+
+***
+
+### DTO (Data Transfer Object) and Entity Flow
+
+<img src="./utility/dto_flow.png" alt="DTO Flow">
