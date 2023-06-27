@@ -1,4 +1,4 @@
-package dk.lyngby.handler;
+package dk.lyngby.model.handler;
 
 import dk.lyngby.config.HibernateConfig;
 import dk.lyngby.dao.PersonDAO;

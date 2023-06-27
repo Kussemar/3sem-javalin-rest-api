@@ -1,4 +1,4 @@
-package dk.lyngby.handler;
+package dk.lyngby.model.handler;
 
 import com.google.gson.JsonObject;
 import dk.lyngby.config.HibernateConfig;
