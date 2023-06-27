@@ -28,11 +28,8 @@ public class UserHandler {
         String token = getToken(userInfos[0], user.getRolesAsStrings()); // throws ApiException
 
         // Create response
-        JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("username", userInfos[0]);
-        responseJson.addProperty("token", token);
         ctx.status(200);
-        ctx.result(responseJson.toString());
+        ctx.result(createResponse(userInfos[0], token));
     }
 
     public void register(Context ctx) throws ApiException, AuthorizationException {
@@ -41,11 +38,15 @@ public class UserHandler {
         String token = getToken(userInfos[0], user.getRolesAsStrings()); // throws ApiException
 
         // Create response
-        JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("username", userInfos[0]);
-        responseJson.addProperty("token", token);
         ctx.res().setStatus(201);
-        ctx.result(responseJson.toString());
+        ctx.result(createResponse(userInfos[0], token));
+    }
+
+    private String createResponse(String username, String token) {
+        JsonObject responseJson = new JsonObject();
+        responseJson.addProperty("username", username);
+        responseJson.addProperty("token", token);
+        return responseJson.toString();
     }
 
     private String[] getUserInfos(Context ctx, boolean tryLogin) throws ApiException {

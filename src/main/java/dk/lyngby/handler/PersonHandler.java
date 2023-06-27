@@ -4,7 +4,6 @@ import dk.lyngby.config.HibernateConfig;
 import dk.lyngby.dao.PersonDAO;
 import dk.lyngby.dto.PersonIdDTO;
 import dk.lyngby.dto.PersonDTO;
-import dk.lyngby.dto.UserDTO;
 import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.exceptions.Message;
 import dk.lyngby.model.Person;
@@ -24,46 +23,57 @@ public class PersonHandler {
 
     public void createPerson(Context ctx) throws ApiException {
         // request
-        ctx.res().setStatus(201);
         PersonDTO jsonRequest = validatePerson(ctx);
         // entity
         Person person = personDao.create(jsonRequest.toPerson());
         // dto
         PersonDTO personDTO = new PersonDTO(person);
+        // response
+        ctx.res().setStatus(201);
         ctx.json(personDTO, PersonDTO.class);
     }
 
     public void getAllPersons(Context ctx) throws ApiException {
-        ctx.res().setStatus(200);
+        // entity
         List<Person> persons = personDao.readAll();
+        // dto
         List<PersonIdDTO> personDTOS = PersonIdDTO.toPersonIdDTOList(persons);
-
-        UserDTO user = ctx.attribute("user");
-        System.out.println(user);
-
+        // response
+        ctx.res().setStatus(200);
         ctx.json(personDTOS, PersonDTO.class);
     }
 
     public void getPersonById(Context ctx) throws ApiException {
-        ctx.res().setStatus(200);
+        // request
         int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateID, "Not a valid id").get();
+        // entity
         Person person = personDao.read(id);
+        // dto
         PersonDTO personDTO = new PersonDTO(person);
+        // response
+        ctx.res().setStatus(200);
         ctx.json(personDTO, PersonDTO.class);
     }
 
     public void updatePersonById(Context ctx) throws ApiException {
-        ctx.res().setStatus(200);
+        // request
         int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateID, "Not a valid id").get();
+        // entity
         Person update = personDao.update(id, validatePerson(ctx).toPerson());
+        // dto
         PersonDTO personDTO = new PersonDTO(update);
+        // response
+        ctx.res().setStatus(200);
         ctx.json(personDTO, PersonDTO.class);
     }
 
     public void deletePersonById(Context ctx) throws ApiException {
-        ctx.res().setStatus(200);
+        // request
         int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateID, "Not a valid id").get();
+        // entity
         personDao.delete(id);
+        // response
+        ctx.res().setStatus(200);
         ctx.json(new Message(200, "Person with id " + id + " deleted"), Message.class);
     }
 
