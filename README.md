@@ -8,9 +8,9 @@ This project is part of a bigger project that allows for development of an API a
 
 The setup is based on the following two repositories:
 1. [Local Environment Setup (development)](https://github.com/tysker/3sem-traefik-setup-local)
-   - Includes a local setup with PostgresSQL database, PgAdmin that uses docker-compose
+   - Includes a local docker-compose setup with a PostgresSQL database and PgAdmin.
 2. [Remote Environment Setup (DigitalOcean - production)](https://github.com/tysker/3sem-traefik-setup-remote)
-   - Includes a remote setup with PostgresSQL database, Traefik (certificates, load balancer, reverse proxy) that uses docker-compose
+   - Includes a remote docker-compose setup with PostgresSQL database, Traefik (certificates, load balancer, reverse proxy) and watchtower (auto updates of docker images).
 
 You can read more about the setup in the repositories above.
 
