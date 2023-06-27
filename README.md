@@ -4,6 +4,16 @@
 
 This is a simple REST API that allows you to create, read, update and delete;
 
+This project is part of a bigger project that allows for development of an API application with following setup remote and local.
+
+The setup is based on the following two repositories:
+1. [Local Environment Setup (development)](https://github.com/tysker/3sem-traefik-setup-local)
+   - Includes a local setup with PostgresSQL database, PgAdmin that uses docker-compose
+2. [Remote Environment Setup (DigitalOcean - production)](https://github.com/tysker/3sem-traefik-setup-remote)
+   - Includes a remote setup with PostgresSQL database, Traefik (certificates, load balancer, reverse proxy) that uses docker-compose
+
+You can read more about the setup in the repositories above.
+
 ## Technologies used:
 
 - JDK 17 (Java 17)
