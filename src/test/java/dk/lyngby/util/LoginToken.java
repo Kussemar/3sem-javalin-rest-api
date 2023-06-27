@@ -1,5 +1,7 @@
 package dk.lyngby.util;
 
+import dk.lyngby.model.User;
+
 import static io.restassured.RestAssured.given;
 
 public class LoginToken {
@@ -20,12 +22,12 @@ public class LoginToken {
 
         return "Bearer " + token;
     }
-
     public static Object getAdminToken() {
-        return login("admintest", "admin123");
+        return login("admin", "admin123");
     }
 
     public static Object getUserToken() {
-        return login("usertest", "user123");
+        return login("user", "user123");
     }
+
 }

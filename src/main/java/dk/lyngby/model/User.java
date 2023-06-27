@@ -1,6 +1,8 @@
 package dk.lyngby.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.Serial;
@@ -11,6 +13,8 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @NamedQueries(@NamedQuery(name = "User.deleteAllRows", query = "DELETE from User"))
+@Getter
+@NoArgsConstructor
 public class User implements Serializable {
 
     @Serial
@@ -29,6 +33,11 @@ public class User implements Serializable {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roleList = new LinkedHashSet<>();
 
+    public User(String userName, String userPass) {
+        this.userName = userName;
+        this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt());
+    }
+
     public Set<String> getRolesAsStrings() {
         if (roleList.isEmpty()) {
             return null;
@@ -39,23 +48,11 @@ public class User implements Serializable {
         });
         return rolesAsStrings;
     }
-
-    public User() {}
-
     public boolean verifyPassword(String pw) {
         return BCrypt.checkpw(pw, userPass);
     }
 
-    public User(String userName, String userPass) {
-        this.userName = userName;
-        this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt());
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserPass(String userPass) {
+    public void setUserPassword(String userPass) {
         this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt());
     }
 
@@ -63,4 +60,5 @@ public class User implements Serializable {
         roleList.add(userRole);
     }
 
+    public Set<Role> getRoleList() {return roleList;}
 }

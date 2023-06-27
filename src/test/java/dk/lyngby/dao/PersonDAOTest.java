@@ -1,19 +1,31 @@
 package dk.lyngby.dao;
 
 import dk.lyngby.config.HibernateConfig;
+import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.model.Person;
+import dk.lyngby.util.TestData;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PersonDAOTest {
 
     private static PersonDAO personDAO;
+    private static SessionFactory sessionConfigFactoryTest;
+
+    private int[] IDS;
+    @BeforeEach
+    void setUp() {
+        IDS = TestData.createPersonTestData(sessionConfigFactoryTest);
+    }
 
     @BeforeAll
     static void setUpAll() {
-        SessionFactory sessionConfigFactoryTest = HibernateConfig.getSessionConfigFactoryTest();
+        HibernateConfig.setTest(true);
+        sessionConfigFactoryTest = HibernateConfig.getSessionConfigFactory();
         personDAO = PersonDAO.getInstance(sessionConfigFactoryTest);
     }
 
@@ -22,34 +34,102 @@ class PersonDAOTest {
         HibernateConfig.setTest(false);
     }
 
-    @BeforeEach
-    void setUp() {
-    }
+    @Test
+    @DisplayName("Create person")
+    void create() throws ApiException {
 
-    @AfterEach
-    void tearDown() {
+        // given
+        Person expected = new Person("John", "Doe", 25, "doe@mail.com");
+
+        // when
+        Person actual = personDAO.create(expected);
+
+        // then
+        assertEquals(expected, actual);
     }
 
     @Test
-    void create() {
-        Person person = new Person("John", "Doe", 25, "doe@mail.com");
-        Person person1 = personDAO.create(person);
-        assertEquals(person, person1);
+    @DisplayName("Read all persons")
+    void readAll() throws ApiException {
+
+        // given
+        int expected = 4;
+
+        // when
+        List<Person> actual = personDAO.readAll();
+
+        // then
+        assertEquals(expected, actual.size());
     }
 
     @Test
-    void readAll() {
+    @DisplayName("Read person by id")
+    void read() throws ApiException {
+
+        // given
+        String expected = "durham@mail.com";
+
+        // when
+        Person actual = personDAO.read(IDS[0]);
+
+        // then
+        assertEquals(expected, actual.getEmail());
     }
 
     @Test
-    void read() {
+    @DisplayName("Update person")
+    void update() throws ApiException {
+
+        // given
+        String expected = "hansen@mail.com";
+
+        // when
+        Person actual = personDAO.update(IDS[3], new Person("Anita", "Hansen", 18, expected));
+
+        // then
+        assertEquals(expected, actual.getEmail());
     }
 
     @Test
-    void update() {
+    @DisplayName("Delete person")
+    void delete() throws ApiException {
+
+        // given
+        int expected = 3;
+
+        // when
+        personDAO.delete(IDS[0]);
+        List<Person> actual = personDAO.readAll();
+
+        // then
+        assertEquals(expected, actual.size());
     }
 
     @Test
-    void delete() {
+    @DisplayName("Validate id")
+    void validateID() {
+
+        // given
+        int id = IDS[0];
+
+        // when
+        boolean actual = personDAO.validateID(id);
+
+        // then
+        assertTrue(actual);
+    }
+
+    @Test
+    @DisplayName("Validate id - invalid")
+    void validateIDInvalid() {
+
+        // given
+        int id = 0;
+
+        // when
+        boolean actual = personDAO.validateID(id);
+
+        // then
+        assertFalse(actual);
     }
 }

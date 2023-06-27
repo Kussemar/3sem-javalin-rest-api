@@ -24,42 +24,40 @@ public class PersonDAO {
         return instance;
     }
 
-    public Person create(Person person) {
+    public Person create(Person person) throws ApiException {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             session.persist(person);
             session.getTransaction().commit();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new ApiException(500, "Could not create person");
         }
         return person;
     }
 
-    public List<Person> readAll() {
+    public List<Person> readAll() throws ApiException {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             List<Person> persons = session.createQuery("from Person", Person.class).list();
             session.getTransaction().commit();
             return persons;
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new ApiException(500, "Could not read persons");
         }
-        return null;
     }
 
-    public Person read(int id) {
+    public Person read(int id) throws ApiException {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             Person person = session.get(Person.class, id);
             session.getTransaction().commit();
             return person;
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new ApiException(500, "Could not read person");
         }
-        return null;
     }
 
-    public Person update(int id, Person person) {
+    public Person update(int id, Person person) throws ApiException {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             Person _person = session.get(Person.class, id);
@@ -69,20 +67,18 @@ public class PersonDAO {
             session.getTransaction().commit();
             return session.merge(person);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new ApiException(500, "Could not update person");
         }
-
-        return null;
     }
 
-    public void delete(int id) {
+    public void delete(int id) throws ApiException {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             Person person = session.get(Person.class, id);
             session.remove(person);
             session.getTransaction().commit();
         } catch (Exception e) {
-            e.printStackTrace();
+           throw new ApiException(500, "Could not delete person");
         }
     }
 

@@ -27,6 +27,7 @@ public class UserDao {
         try(Session session = sessionFactory.openSession()){
             session.beginTransaction();
             User user = session.get(User.class, username);
+
             if(user == null || !user.verifyPassword(password)){
                 throw new AuthorizationException(401, "Invalid user name or password");
             }
@@ -36,8 +37,10 @@ public class UserDao {
     }
 
     public User createUser(String username, String password, String user_role) throws AuthorizationException {
+
         try(Session session = sessionFactory.openSession()){
             session.beginTransaction();
+
             User user = new User(username, password);
             Role role = session.get(Role.class, user_role);
 

@@ -35,7 +35,7 @@ public class AccessManagerHandler {
         if (isAuthorized) {
             handler.handle(ctx);
         } else {
-            throw new AuthorizationException(401, "Not authorized");
+            throw new AuthorizationException(401, "You are not authorized to perform this action");
         }
     }
 

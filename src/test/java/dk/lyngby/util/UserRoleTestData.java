@@ -5,7 +5,7 @@ import dk.lyngby.model.Role;
 import dk.lyngby.model.User;
 import org.hibernate.SessionFactory;
 
-public class PopulateTestData {
+public class UserRoleTestData {
 
     static SessionFactory sessionFactory = HibernateConfig.getSessionConfigFactory();
 
@@ -24,8 +24,8 @@ public class PopulateTestData {
 
         try {
             sessionFactory.getCurrentSession().beginTransaction();
-            sessionFactory.getCurrentSession().createNamedQuery("Role.deleteAllRows").executeUpdate();
-            sessionFactory.getCurrentSession().createNamedQuery("User.deleteAllRows").executeUpdate();
+            sessionFactory.getCurrentSession().createNamedQuery("Role.deleteAllRows", Role.class).executeUpdate();
+            sessionFactory.getCurrentSession().createNamedQuery("User.deleteAllRows", User.class).executeUpdate();
             sessionFactory.getCurrentSession().persist(userRole);
             sessionFactory.getCurrentSession().persist(adminRole);
             sessionFactory.getCurrentSession().persist(user);

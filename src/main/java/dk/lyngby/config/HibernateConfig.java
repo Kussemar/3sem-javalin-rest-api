@@ -93,18 +93,18 @@ public class HibernateConfig {
         }
     }
 
-    public static void getAnnotationConfiguration(Configuration configuration) {
+    private static void getAnnotationConfiguration(Configuration configuration) {
         configuration.addAnnotatedClass(Person.class);
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Role.class);
     }
 
-    public static SessionFactory getSessionConfigFactoryDev() {
+    private static SessionFactory getSessionConfigFactoryDev() {
         if (sessionConfigFactory == null) sessionConfigFactory = buildSessionConfigFactoryDev();
         return sessionConfigFactory;
     }
 
-    public static SessionFactory getSessionConfigFactoryTest() {
+    private static SessionFactory getSessionConfigFactoryTest() {
         if (sessionConfigFactory == null) sessionConfigFactory = buildSessionConfigFactoryTest();
         return sessionConfigFactory;
     }
@@ -116,5 +116,9 @@ public class HibernateConfig {
 
     public static void setTest(Boolean test) {
         isTest = test;
+    }
+
+    public static Boolean getTest() {
+        return isTest;
     }
 }
