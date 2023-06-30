@@ -105,7 +105,7 @@ the HibernateConfig file under the config folder. The configuration is based on 
     .....
 
 ```
-### For Mac users with M1 and M2 chips has to make some changes to the HibernateConfig file
+**For Mac users with M1 and M2 chips has to make some changes to the HibernateConfig file**
 
 
 Do the following to get the Testcontainers up and running:
