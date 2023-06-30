@@ -38,7 +38,7 @@ You can read more about the setup in the repositories above.
 - Git
 - Postman (Optional)
 
-### Deployment pipeline
+### Deployment CI pipeline
 
 1. Change docker image name in GitHub actions file
 
@@ -87,6 +87,37 @@ on:
         <!--  Javalin    -->
         <javalin.port>port number</javalin.port>
     </properties>
+```
+
+5. Testcontainers
+
+We are using Testcontainers to run integration tests against a real database. The testcontainers are configured in
+the HibernateConfig file under the config folder. The configuration is based on the following properties:
+
+```java
+    .....
+
+    1. private static final String DB_DRIVER = "org.postgresql.Driver";
+    2. private static final String DB_URL = "jdbc:tc:postgresql:15.3-alpine3.18:///test_db";
+    3. private static final String DB_USERNAME = "test";
+    4. private static final String DB_PASSWORD = "test";
+
+    .....
+
+```
+### For Mac users with M1 and M2 chips has to make some changes to the HibernateConfig file
+
+
+Do the following to get the Testcontainers up and running:
+
+1. Run the following commands in your terminal
+
+```bash 
+    # New tag (mac m1/m2): 
+    docker tag arm64v8/postgres:latest postgresql:15.3-alpine3.18
+    
+    # Symlink
+    sudo ln -s $HOME/.docker/run/docker.sock /var/run/docker.sock
 ```
 
 ***

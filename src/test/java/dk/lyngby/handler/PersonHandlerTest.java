@@ -47,8 +47,11 @@ class PersonHandlerTest {
     @Test
     @DisplayName("Create person with admin token")
     void createPersonWithAdminToken() {
+
+        // given
         Person person = new Person("John", "Doe", 25, "doe@mail.com");
 
+        // when
         given()
                 .header("Authorization", adminToken)
                 .contentType("application/json")
@@ -58,6 +61,7 @@ class PersonHandlerTest {
                 .then()
                 .assertThat()
                 .statusCode(201)
+        // then
                 .body("firstName", equalTo("John"))
                 .body("lastName", equalTo("Doe"))
                 .body("age", equalTo(25))
@@ -65,10 +69,13 @@ class PersonHandlerTest {
     }
 
     @Test
-    @DisplayName("Create person with user token and expect 401 Unauthorized")
-    void createPersonWithUserToken() {
+    @DisplayName("Create person with a not authorized role and expect 401 Unauthorized")
+    void createPersonWithNotAcceptedRole() {
+
+        // given
         Person person = new Person("John", "Doe", 25, "doe@mail.com");
 
+        // when
         given()
                 .header("Authorization", userToken)
                 .contentType("application/json")
@@ -78,6 +85,7 @@ class PersonHandlerTest {
                 .then()
                 .assertThat()
                 .statusCode(401)
+        // then
                 .body("message", equalTo("You are not authorized to perform this action"));
 
     }
@@ -85,8 +93,11 @@ class PersonHandlerTest {
     @Test
     @DisplayName("Create person with invalid email and expect 400 Bad Request")
     void createPersonWithInvalidEmail() {
+
+        // given
         Person person = new Person("John", "Doe", 25, "doemail.com");
 
+        // when
         given()
                 .header("Authorization", adminToken)
                 .contentType("application/json")
@@ -95,23 +106,48 @@ class PersonHandlerTest {
                 .post(BASE_URL + "/person")
                 .then()
                 .assertThat()
+        // then
                 .statusCode(400);
 
     }
 
     @Test
     void getAllPersons() {
+
+        // given
+
+        // when
+
+        // then
     }
 
     @Test
     void getPersonById() {
+
+        // given
+
+        // when
+
+        // then
     }
 
     @Test
     void updatePersonById() {
+
+        // given
+
+        // when
+
+        // then
     }
 
     @Test
     void deletePersonById() {
+
+            // given
+
+            // when
+
+            // then
     }
 }
