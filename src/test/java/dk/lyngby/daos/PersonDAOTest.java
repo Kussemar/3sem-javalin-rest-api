@@ -1,4 +1,4 @@
-package dk.lyngby.dao;
+package dk.lyngby.daos;
 
 import dk.lyngby.config.HibernateConfig;
 import dk.lyngby.exceptions.ApiException;
@@ -113,7 +113,7 @@ class PersonDAOTest {
         int id = IDS[0];
 
         // when
-        boolean actual = personDAO.validateID(id);
+        boolean actual = personDAO.validateId(id);
 
         // then
         assertTrue(actual);
@@ -127,7 +127,7 @@ class PersonDAOTest {
         int id = 0;
 
         // when
-        boolean actual = personDAO.validateID(id);
+        boolean actual = personDAO.validateId(id);
 
         // then
         assertFalse(actual);

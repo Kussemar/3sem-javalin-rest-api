@@ -1,4 +1,4 @@
-package dk.lyngby.dao;
+package dk.lyngby.daos;
 
 import dk.lyngby.exceptions.AuthorizationException;
 import dk.lyngby.model.Role;
@@ -6,6 +6,7 @@ import dk.lyngby.model.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.NoArgsConstructor;
+
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class UserDao {

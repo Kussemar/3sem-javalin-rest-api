@@ -1,6 +1,6 @@
-package dk.lyngby.security.handler;
+package dk.lyngby.handler;
 
-import dk.lyngby.dto.UserDTO;
+import dk.lyngby.dtos.UserDTO;
 import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.exceptions.AuthorizationException;
 import dk.lyngby.security.TokenFactory;

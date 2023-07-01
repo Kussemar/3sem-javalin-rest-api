@@ -17,16 +17,23 @@ import static org.hamcrest.Matchers.equalTo;
 class PersonHandlerTest {
 
     private static Javalin app;
+    private static EntityManagerFactory emfTest;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static Object adminToken;
     private static Object userToken;
     private static final String BASE_URL = "http://localhost:7777/api/v1";
 
+    @BeforeEach
+    void setUpEach() {
+        // Setup test database for each test
+        TestData.createPersonTestData(emfTest);
+    }
+
     @BeforeAll
     static void setUpAll() {
         // Setup test database
         HibernateConfig.setTest(true);
-        EntityManagerFactory emfTest = HibernateConfig.getEntityManagerFactory();
+        emfTest = HibernateConfig.getEntityManagerFactory();
         TestData.createUserTestData(emfTest);
 
         // Start server
@@ -115,10 +122,18 @@ class PersonHandlerTest {
     void getAllPersons() {
 
         // given
+        int listSize = 4;
 
         // when
-
+        given()
+                .contentType("application/json")
+                .when()
+                .get(BASE_URL + "/person")
+                .then()
+                .assertThat()
+                .statusCode(200)
         // then
+                .body("size()", equalTo(listSize));
     }
 
     @Test

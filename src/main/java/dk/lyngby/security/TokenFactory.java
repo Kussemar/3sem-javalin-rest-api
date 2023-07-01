@@ -9,7 +9,7 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import dk.lyngby.config.ApplicationConfig;
-import dk.lyngby.dto.UserDTO;
+import dk.lyngby.dtos.UserDTO;
 import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.exceptions.AuthorizationException;
 import lombok.AccessLevel;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class TokenFactory {
+public class TokenFactory implements ITokenFactory {
     private static TokenFactory instance;
     private static final boolean isDeployed = (System.getenv("DEPLOYED") != null);
     private static final String ISSUER, TOKEN_EXPIRE_TIME, SECRET_KEY;
@@ -45,6 +45,7 @@ public class TokenFactory {
         return instance;
     }
 
+    @Override
     public String createToken(String userName, Set<String> roles) throws ApiException {
 
         try {
@@ -63,6 +64,7 @@ public class TokenFactory {
         }
     }
 
+    @Override
     public UserDTO verifyToken(String token) throws ApiException, AuthorizationException {
         try {
             SignedJWT signedJWT = parseTokenAndVerify(token);
@@ -73,9 +75,10 @@ public class TokenFactory {
         }
     }
 
+    @Override
     public String[] parseJsonObject(String jsonString, Boolean tryLogin) throws ApiException {
         try {
-            List<String> roles = Arrays.asList("user", "admin");
+            List<String> roles = Arrays.asList("user", "admin", "manager");
             JsonObject json = JsonParser.parseString(jsonString).getAsJsonObject();
             String username = json.get("username").getAsString();
             String password = json.get("password").getAsString();

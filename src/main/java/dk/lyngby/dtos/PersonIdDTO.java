@@ -1,4 +1,4 @@
-package dk.lyngby.dto;
+package dk.lyngby.dtos;
 
 import dk.lyngby.model.Person;
 import lombok.Getter;

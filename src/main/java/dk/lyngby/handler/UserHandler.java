@@ -1,8 +1,8 @@
-package dk.lyngby.model.handler;
+package dk.lyngby.handler;
 
 import com.google.gson.JsonObject;
 import dk.lyngby.config.HibernateConfig;
-import dk.lyngby.dao.UserDao;
+import dk.lyngby.daos.UserDao;
 import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.exceptions.AuthorizationException;
 import dk.lyngby.model.User;

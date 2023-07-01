@@ -1,6 +1,6 @@
 package dk.lyngby.config;
 
-import dk.lyngby.security.handler.AccessManagerHandler;
+import dk.lyngby.handler.AccessManagerHandler;
 import dk.lyngby.routes.Routes;
 import io.javalin.Javalin;
 import io.javalin.config.JavalinConfig;

@@ -1,4 +1,4 @@
-package dk.lyngby.exceptions.handler;
+package dk.lyngby.handler;
 
 import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.exceptions.AuthorizationException;

@@ -20,6 +20,16 @@ Content-Type: application/json
   "role": "user"
 }
 
+### Register user_manager/manager
+POST {{url}}auth/register
+Content-Type: application/json
+
+{
+  "username": "user_manager",
+  "password": "user_manager",
+  "role": "manager"
+}
+
 > {% client.global.set("token", response.body.token); %}
 
 ### Login as admin
@@ -40,6 +50,15 @@ Content-Type: application/json
 {
   "username": "user",
   "password": "user"
+}
+
+### Login as manager
+POST {{url}}auth/login
+Content-Type: application/json
+
+{
+  "username": "user_manager",
+  "password": "user_manager"
 }
 
 > {% client.global.set("token", response.body.token); %}

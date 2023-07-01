@@ -1,4 +1,4 @@
-package dk.lyngby.dto;
+package dk.lyngby.dtos;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,6 @@
 package dk.lyngby.routes;
 
-import dk.lyngby.model.handler.UserHandler;
+import dk.lyngby.handler.UserHandler;
 import io.javalin.apibuilder.EndpointGroup;
 
 import static io.javalin.apibuilder.ApiBuilder.path;

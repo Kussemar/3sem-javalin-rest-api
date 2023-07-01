@@ -1,4 +1,4 @@
-package dk.lyngby.dao;
+package dk.lyngby.daos;
 
 import dk.lyngby.config.HibernateConfig;
 import dk.lyngby.exceptions.AuthorizationException;

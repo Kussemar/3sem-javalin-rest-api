@@ -1,16 +1,15 @@
-package dk.lyngby.dao;
+package dk.lyngby.daos;
 
 import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.model.Person;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.NoArgsConstructor;
-import org.hibernate.SessionFactory;
 
 import java.util.List;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
-public class PersonDAO {
+public class PersonDAO implements IDAO<Person>{
 
     private static PersonDAO instance;
     private static EntityManagerFactory emf;
@@ -23,28 +22,7 @@ public class PersonDAO {
         return instance;
     }
 
-    public Person create(Person person) throws ApiException {
-        try (EntityManager em = emf.createEntityManager()) {
-            em.getTransaction().begin();
-            em.persist(person);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            throw new ApiException(500, "Could not create person");
-        }
-        return person;
-    }
-
-    public List<Person> readAll() throws ApiException {
-        try (EntityManager em = emf.createEntityManager()) {
-            em.getTransaction().begin();
-            List<Person> persons = em.createQuery("from Person", Person.class).getResultList();
-            em.getTransaction().commit();
-            return persons;
-        } catch (Exception e) {
-            throw new ApiException(500, "Could not read persons");
-        }
-    }
-
+    @Override
     public Person read(int id) throws ApiException {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
@@ -56,6 +34,31 @@ public class PersonDAO {
         }
     }
 
+    @Override
+    public List<Person> readAll() throws ApiException {
+        try (EntityManager em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+            List<Person> persons = em.createQuery("from Person", Person.class).getResultList();
+            em.getTransaction().commit();
+            return persons;
+        } catch (Exception e) {
+            throw new ApiException(500, "Could not read persons");
+        }
+    }
+
+    @Override
+    public Person create(Person person) throws ApiException {
+        try (EntityManager em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+            em.persist(person);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            throw new ApiException(500, "Could not create person");
+        }
+        return person;
+    }
+
+    @Override
     public Person update(int id, Person person) throws ApiException {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
@@ -70,6 +73,7 @@ public class PersonDAO {
         }
     }
 
+    @Override
     public void delete(int id) throws ApiException {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
@@ -81,7 +85,7 @@ public class PersonDAO {
         }
     }
 
-    public boolean validateID(int number) {
+    public boolean validateId(int number) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
             Person person = em.find(Person.class, number);
