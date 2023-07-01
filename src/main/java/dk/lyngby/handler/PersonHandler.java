@@ -2,8 +2,8 @@ package dk.lyngby.handler;
 
 import dk.lyngby.config.HibernateConfig;
 import dk.lyngby.daos.PersonDAO;
-import dk.lyngby.dtos.PersonIdDTO;
 import dk.lyngby.dtos.PersonDTO;
+import dk.lyngby.dtos.PersonIdDTO;
 import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.exceptions.Message;
 import dk.lyngby.model.Person;
@@ -12,16 +12,16 @@ import jakarta.persistence.EntityManagerFactory;
 
 import java.util.List;
 
-public class PersonHandler{
+public class PersonHandler implements IHandler<PersonDTO>{
 
     private final PersonDAO personDao;
 
     public PersonHandler() {
-        EntityManagerFactory emf= HibernateConfig.getEntityManagerFactory();
+        EntityManagerFactory emf = HibernateConfig.getEntityManagerFactory();
         personDao = PersonDAO.getInstance(emf);
     }
 
-
+    @Override
     public void readEntity(Context ctx) throws ApiException {
         // request
         int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateId, "Not a valid id").get();
@@ -34,7 +34,7 @@ public class PersonHandler{
         ctx.json(personDTO, PersonDTO.class);
     }
 
-
+    @Override
     public void readAllEntities(Context ctx) throws ApiException {
         // entity
         List<Person> persons = personDao.readAll();
@@ -45,7 +45,7 @@ public class PersonHandler{
         ctx.json(personDTOS, PersonDTO.class);
     }
 
-
+    @Override
     public void createEntity(Context ctx) throws ApiException {
         // request
         PersonDTO jsonRequest = validateEntity(ctx);
@@ -58,7 +58,7 @@ public class PersonHandler{
         ctx.json(personDTO, PersonDTO.class);
     }
 
-
+    @Override
     public void updateEntity(Context ctx) throws ApiException {
         // request
         int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateId, "Not a valid id").get();
@@ -71,7 +71,7 @@ public class PersonHandler{
         ctx.json(personDTO, PersonDTO.class);
     }
 
-
+    @Override
     public void deleteEntity(Context ctx) throws ApiException {
         // request
         int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateId, "Not a valid id").get();
@@ -82,11 +82,13 @@ public class PersonHandler{
         ctx.json(new Message(200, "Person with id " + id + " deleted"), Message.class);
     }
 
-    private boolean validateId(int number) {
-        return personDao.validateId(number);
+    @Override
+    public boolean validateId(int id) {
+        return personDao.validateId(id);
     }
 
-    private PersonDTO validateEntity(Context ctx) {
+    @Override
+    public PersonDTO validateEntity(Context ctx) {
         return ctx.bodyValidator(PersonDTO.class)
                 .check(p -> p.getAge() > 0 && p.getAge() < 120, "Age must be between 0 and 120")
                 .check(p -> p.getFirstName().length() > 0, "First name must be longer than 0 characters")
