@@ -15,7 +15,7 @@ import static io.javalin.apibuilder.ApiBuilder.path;
 public class Routes {
 
     private final PersonRoutes personRoutes = new PersonRoutes();
-    private final AuthenticationRoute authenticationRoutes = new AuthenticationRoute();
+    private final UserRoutes userRoutes = new UserRoutes();
     private final Logger LOGGER = LoggerFactory.getLogger(Routes.class);
     private final ExceptionHandler exceptionHandler = new ExceptionHandler();
     private int count = 0;
@@ -37,7 +37,7 @@ public class Routes {
             app.before(this::requestInfoHandler);
             app.before(this::corsHandler);
             app.routes(() -> {
-                path("/", authenticationRoutes.getRoutes());
+                path("/", userRoutes.getRoutes());
                 path("/", personRoutes.getRoutes());
             });
             app.error(404, ctx -> {

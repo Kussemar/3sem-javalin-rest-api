@@ -12,9 +12,9 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UserDaoTest {
+class UserDAOTest {
 
-    private static UserDao userDao;
+    private static UserDAO userDao;
 
     private static EntityManagerFactory emfTest;
 
@@ -27,7 +27,7 @@ class UserDaoTest {
     static void setUpAll() {
         HibernateConfig.setTest(true);
         emfTest = HibernateConfig.getEntityManagerFactory();
-        userDao = UserDao.getInstance(emfTest);
+        userDao = UserDAO.getInstance(emfTest);
     }
 
     @AfterAll
@@ -40,7 +40,7 @@ class UserDaoTest {
     void getInstance() {
 
         // given
-        UserDao expected = UserDao.getInstance(emfTest);
+        UserDAO expected = UserDAO.getInstance(emfTest);
 
         // when
         var actual = userDao;
@@ -77,7 +77,7 @@ class UserDaoTest {
     void createUser() throws AuthorizationException {
 
         // given
-        User expected = userDao.createUser("test", "test123", "user");
+        User expected = userDao.registerUser("test", "test123", "user");
 
         // when
         boolean actual = expected.getRoleList().contains(new Role("user"));
@@ -91,7 +91,7 @@ class UserDaoTest {
     void createUserWithNewRole() throws AuthorizationException {
 
         // given
-        User expected = userDao.createUser("test", "test123", "manager");
+        User expected = userDao.registerUser("test", "test123", "manager");
 
         // when
         boolean actual = expected.getRoleList().contains(new Role("manager"));
@@ -110,7 +110,7 @@ class UserDaoTest {
         String role = "user";
 
         // then
-        assertThrows(AuthorizationException.class, () -> userDao.createUser(username, password, role));
+        assertThrows(AuthorizationException.class, () -> userDao.registerUser(username, password, role));
     }
 
     @Test

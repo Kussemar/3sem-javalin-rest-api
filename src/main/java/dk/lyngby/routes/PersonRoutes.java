@@ -14,11 +14,11 @@ public class PersonRoutes {
 
         return () -> {
             path("/person", () -> {
-                post("/", personHandler::createEntity, RouteRoles.ADMIN);
-                get("/", personHandler::readAllEntities, RouteRoles.ANYONE);
-                get("{id}", personHandler::readEntity, RouteRoles.USER, RouteRoles.ADMIN);
-                put("{id}", personHandler::updateEntity, RouteRoles.ADMIN);
-                delete("{id}", personHandler::deleteEntity, RouteRoles.ADMIN);
+                post("/", personHandler::create, RouteRoles.ADMIN, RouteRoles.MANAGER);
+                get("/", personHandler::readAll, RouteRoles.ANYONE);
+                get("{id}", personHandler::read, RouteRoles.USER, RouteRoles.ADMIN);
+                put("{id}", personHandler::update, RouteRoles.ADMIN);
+                delete("{id}", personHandler::delete, RouteRoles.ADMIN);
             });
         };
     }

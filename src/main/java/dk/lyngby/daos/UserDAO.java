@@ -1,5 +1,6 @@
 package dk.lyngby.daos;
 
+import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.exceptions.AuthorizationException;
 import dk.lyngby.model.Role;
 import dk.lyngby.model.User;
@@ -7,28 +8,30 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
-public class UserDao {
+public class UserDAO extends FactoryDAO<User> implements IDAO<User> {
 
-    private static UserDao instance;
+    private static UserDAO instance;
     private static EntityManagerFactory emf;
 
-    public static UserDao getInstance(EntityManagerFactory _emf) {
+    public static UserDAO getInstance(EntityManagerFactory _emf) {
         if (instance == null) {
             emf = _emf;
-            instance = new UserDao();
+            instance = new UserDAO();
         }
         return instance;
     }
 
     public User getVerifiedUser(String username, String password) throws AuthorizationException {
 
-        try(EntityManager em = emf.createEntityManager()){
+        try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
             User user = em.find(User.class, username);
 
-            if(user == null || !user.verifyPassword(password)){
+            if (user == null || !user.verifyPassword(password)) {
                 throw new AuthorizationException(401, "Invalid user name or password");
             }
             em.getTransaction().commit();
@@ -36,15 +39,15 @@ public class UserDao {
         }
     }
 
-    public User createUser(String username, String password, String user_role) throws AuthorizationException {
+    public User registerUser(String username, String password, String user_role) throws AuthorizationException {
 
-        try(EntityManager em = emf.createEntityManager()){
+        try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
 
             User user = new User(username, password);
             Role role = em.find(Role.class, user_role);
 
-            if(role == null){
+            if (role == null) {
                 role = createRole(user_role);
             }
 
@@ -57,13 +60,43 @@ public class UserDao {
         }
     }
 
-    public Role createRole(String role){
-        try(EntityManager em = emf.createEntityManager()){
+    public Role createRole(String role) {
+        try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
             Role newRole = new Role(role);
             em.persist(newRole);
             em.getTransaction().commit();
             return newRole;
         }
+    }
+
+    @Override
+    public User read(int id) throws ApiException {
+        return super.read(id, User.class, emf);
+    }
+
+    @Override
+    public List<User> readAll() throws ApiException {
+        return super.readAll(User.class, emf);
+    }
+
+    @Override
+    public User create(User user) throws ApiException {
+        return super.create(user, emf);
+    }
+
+    @Override
+    public User update(int id, User user) throws ApiException {
+        return super.update(id, user, User.class, emf);
+    }
+
+    @Override
+    public void delete(int id) throws ApiException {
+        super.delete(id, User.class, emf);
+    }
+
+    @Override
+    public boolean validateId(int number) {
+        return super.validateId(number, User.class, emf);
     }
 }

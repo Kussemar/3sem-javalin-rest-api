@@ -12,21 +12,21 @@ import jakarta.persistence.EntityManagerFactory;
 
 import java.util.List;
 
-public class PersonHandler implements IHandler<PersonDTO>{
+public class PersonHandler implements IEntityHandler<PersonDTO>{
 
-    private final PersonDAO personDao;
+    private final PersonDAO PERSON_DAO;
 
     public PersonHandler() {
         EntityManagerFactory emf = HibernateConfig.getEntityManagerFactory();
-        personDao = PersonDAO.getInstance(emf);
+        PERSON_DAO = PersonDAO.getInstance(emf);
     }
 
     @Override
-    public void readEntity(Context ctx) throws ApiException {
+    public void read(Context ctx) throws ApiException {
         // request
         int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateId, "Not a valid id").get();
         // entity
-        Person person = personDao.read(id);
+        Person person = PERSON_DAO.read(id);
         // dto
         PersonDTO personDTO = new PersonDTO(person);
         // response
@@ -35,9 +35,9 @@ public class PersonHandler implements IHandler<PersonDTO>{
     }
 
     @Override
-    public void readAllEntities(Context ctx) throws ApiException {
+    public void readAll(Context ctx) throws ApiException {
         // entity
-        List<Person> persons = personDao.readAll();
+        List<Person> persons = PERSON_DAO.readAll();
         // dto
         List<PersonIdDTO> personDTOS = PersonIdDTO.toPersonIdDTOList(persons);
         // response
@@ -46,11 +46,11 @@ public class PersonHandler implements IHandler<PersonDTO>{
     }
 
     @Override
-    public void createEntity(Context ctx) throws ApiException {
+    public void create(Context ctx) throws ApiException {
         // request
         PersonDTO jsonRequest = validateEntity(ctx);
         // entity
-        Person person = personDao.create(jsonRequest.toPerson());
+        Person person = PERSON_DAO.create(jsonRequest.toPerson());
         // dto
         PersonDTO personDTO = new PersonDTO(person);
         // response
@@ -59,11 +59,11 @@ public class PersonHandler implements IHandler<PersonDTO>{
     }
 
     @Override
-    public void updateEntity(Context ctx) throws ApiException {
+    public void update(Context ctx) throws ApiException {
         // request
         int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateId, "Not a valid id").get();
         // entity
-        Person update = personDao.update(id, validateEntity(ctx).toPerson());
+        Person update = PERSON_DAO.update(id, validateEntity(ctx).toPerson());
         // dto
         PersonDTO personDTO = new PersonDTO(update);
         // response
@@ -72,11 +72,11 @@ public class PersonHandler implements IHandler<PersonDTO>{
     }
 
     @Override
-    public void deleteEntity(Context ctx) throws ApiException {
+    public void delete(Context ctx) throws ApiException {
         // request
         int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateId, "Not a valid id").get();
         // entity
-        personDao.delete(id);
+        PERSON_DAO.delete(id);
         // response
         ctx.res().setStatus(200);
         ctx.json(new Message(200, "Person with id " + id + " deleted"), Message.class);
@@ -84,7 +84,7 @@ public class PersonHandler implements IHandler<PersonDTO>{
 
     @Override
     public boolean validateId(int id) {
-        return personDao.validateId(id);
+        return PERSON_DAO.validateId(id);
     }
 
     @Override

@@ -1,0 +1,6 @@
+GET {{url}}auth
+Authorization: Bearer {{token}}
+
+###
+GET {{url}}auth/1
+Authorization: Bearer {{token}}

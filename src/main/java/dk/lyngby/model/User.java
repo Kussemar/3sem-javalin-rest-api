@@ -1,5 +1,6 @@
 package dk.lyngby.model;
 
+import dk.lyngby.security.TokenFactory;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

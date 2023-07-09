@@ -1,12 +1,12 @@
 package dk.lyngby.routes;
 
 import dk.lyngby.handler.UserHandler;
+import dk.lyngby.security.RouteRoles;
 import io.javalin.apibuilder.EndpointGroup;
 
-import static io.javalin.apibuilder.ApiBuilder.path;
-import static io.javalin.apibuilder.ApiBuilder.post;
+import static io.javalin.apibuilder.ApiBuilder.*;
 
-public class AuthenticationRoute {
+public class UserRoutes {
     private final UserHandler userHandler = new UserHandler();
 
     protected EndpointGroup getRoutes() {
@@ -15,6 +15,10 @@ public class AuthenticationRoute {
             path("/auth", () -> {
                 post("/login", userHandler::login);
                 post("/register", userHandler::register);
+                get("/", userHandler::readAll, RouteRoles.ADMIN);
+                get("{id}", userHandler::read, RouteRoles.ADMIN);
+                put("{id}", userHandler::update, RouteRoles.ADMIN);
+                delete("{id}", userHandler::delete, RouteRoles.ADMIN);
             });
         };
     }
