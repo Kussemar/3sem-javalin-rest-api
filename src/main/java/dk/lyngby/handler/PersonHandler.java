@@ -12,7 +12,7 @@ import jakarta.persistence.EntityManagerFactory;
 
 import java.util.List;
 
-public class PersonHandler implements IEntityHandler<PersonDTO>{
+public class PersonHandler implements IEntityHandler<PersonDTO, Integer>{
 
     private final PersonDAO PERSON_DAO;
 
@@ -24,7 +24,7 @@ public class PersonHandler implements IEntityHandler<PersonDTO>{
     @Override
     public void read(Context ctx) throws ApiException {
         // request
-        int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateId, "Not a valid id").get();
+        int id = ctx.pathParamAsClass("id", Integer.class).check(this::validatePrimaryKey, "Not a valid id").get();
         // entity
         Person person = PERSON_DAO.read(id);
         // dto
@@ -61,7 +61,7 @@ public class PersonHandler implements IEntityHandler<PersonDTO>{
     @Override
     public void update(Context ctx) throws ApiException {
         // request
-        int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateId, "Not a valid id").get();
+        int id = ctx.pathParamAsClass("id", Integer.class).check(this::validatePrimaryKey, "Not a valid id").get();
         // entity
         Person update = PERSON_DAO.update(id, validateEntity(ctx).toPerson());
         // dto
@@ -74,7 +74,7 @@ public class PersonHandler implements IEntityHandler<PersonDTO>{
     @Override
     public void delete(Context ctx) throws ApiException {
         // request
-        int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateId, "Not a valid id").get();
+        int id = ctx.pathParamAsClass("id", Integer.class).check(this::validatePrimaryKey, "Not a valid id").get();
         // entity
         PERSON_DAO.delete(id);
         // response
@@ -83,8 +83,8 @@ public class PersonHandler implements IEntityHandler<PersonDTO>{
     }
 
     @Override
-    public boolean validateId(int id) {
-        return PERSON_DAO.validateId(id);
+    public boolean validatePrimaryKey(Integer id) {
+        return PERSON_DAO.validatePrimaryKey(id);
     }
 
     @Override

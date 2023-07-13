@@ -4,11 +4,11 @@ import dk.lyngby.exceptions.ApiException;
 
 import java.util.List;
 
-public interface IDAO<T> {
-    T read(int id) throws ApiException;
+public interface IDAO<T, D> {
+    T read(D d) throws ApiException;
     List<T> readAll() throws ApiException;
     T create(T t) throws ApiException;
-    T update(int id, T t) throws ApiException;
-    void delete(int id) throws ApiException;
-    boolean validateId(int id);
+    T update(D d, T t) throws ApiException;
+    void delete(D d) throws ApiException;
+    boolean validatePrimaryKey(D d);
 }

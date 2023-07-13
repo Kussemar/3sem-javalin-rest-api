@@ -113,7 +113,7 @@ class PersonDAOTest {
         int id = IDS[0];
 
         // when
-        boolean actual = personDAO.validateId(id);
+        boolean actual = personDAO.validatePrimaryKey(id);
 
         // then
         assertTrue(actual);
@@ -127,7 +127,7 @@ class PersonDAOTest {
         int id = 0;
 
         // when
-        boolean actual = personDAO.validateId(id);
+        boolean actual = personDAO.validatePrimaryKey(id);
 
         // then
         assertFalse(actual);

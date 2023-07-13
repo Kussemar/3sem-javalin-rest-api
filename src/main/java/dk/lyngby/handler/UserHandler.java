@@ -15,7 +15,7 @@ import jakarta.persistence.EntityManagerFactory;
 import java.util.List;
 import java.util.Set;
 
-public class UserHandler implements IEntityHandler<UserDTO>{
+public class UserHandler implements IEntityHandler<UserDTO, String> {
 
     private final UserDAO USER_DAO;
     private final TokenFactory TOKEN_FACTORY = TokenFactory.getInstance();
@@ -48,9 +48,9 @@ public class UserHandler implements IEntityHandler<UserDTO>{
     @Override
     public void read(Context ctx) throws ApiException {
         // request
-        int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateId, "Not a valid id").get();
+        String userName = ctx.pathParamAsClass("name", String.class).check(this::validatePrimaryKey, "Not a valid name").get();
         // entity
-        User user = USER_DAO.read(id);
+        User user = USER_DAO.read(userName);
         // dto
         UserDTO userDTO = new UserDTO(user);
         // response
@@ -71,7 +71,7 @@ public class UserHandler implements IEntityHandler<UserDTO>{
 
     @Override
     public void create(Context ctx) throws ApiException {
-        ctx.result("Not implemented");
+        ctx.result("Use register instead");
     }
 
     @Override
@@ -82,17 +82,17 @@ public class UserHandler implements IEntityHandler<UserDTO>{
     @Override
     public void delete(Context ctx) throws ApiException {
         // request
-        int id = ctx.pathParamAsClass("id", Integer.class).check(this::validateId, "Not a valid id").get();
+        String userName = ctx.pathParamAsClass("name", String.class).check(this::validatePrimaryKey, "Not a valid name").get();
         // entity
-        USER_DAO.delete(id);
+        USER_DAO.delete(userName);
         // response
         ctx.res().setStatus(200);
-        ctx.json(new Message(200, "User with id " + id + " deleted"), Message.class);
+        ctx.json(new Message(200, "User with name " + userName + " deleted"), Message.class);
     }
 
     @Override
-    public boolean validateId(int number) {
-        return USER_DAO.validateId(number);
+    public boolean validatePrimaryKey(String userName) {
+        return USER_DAO.validatePrimaryKey(userName);
     }
 
     @Override

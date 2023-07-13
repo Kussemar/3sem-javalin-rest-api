@@ -1,11 +1,9 @@
 package dk.lyngby.model;
 
-import dk.lyngby.security.TokenFactory;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashSet;
@@ -24,19 +22,19 @@ public class User implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "user_name", length = 25)
-    private String userName;
+    private String username;
     @Basic(optional = false)
     @Column(name = "user_pass")
-    private String userPass;
+    private String userpass;
     @JoinTable(name = "user_roles", joinColumns = {
             @JoinColumn(name = "user_name", referencedColumnName = "user_name")}, inverseJoinColumns = {
             @JoinColumn(name = "role_name", referencedColumnName = "role_name")})
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roleList = new LinkedHashSet<>();
 
-    public User(String userName, String userPass) {
-        this.userName = userName;
-        this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt());
+    public User(String username, String userpass) {
+        this.username = username;
+        this.userpass = BCrypt.hashpw(userpass, BCrypt.gensalt());
     }
 
     public Set<String> getRolesAsStrings() {
@@ -50,11 +48,7 @@ public class User implements Serializable {
         return rolesAsStrings;
     }
     public boolean verifyPassword(String pw) {
-        return BCrypt.checkpw(pw, userPass);
-    }
-
-    public void setUserPassword(String userPass) {
-        this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt());
+        return BCrypt.checkpw(pw, userpass);
     }
 
     public void addRole(Role userRole) {

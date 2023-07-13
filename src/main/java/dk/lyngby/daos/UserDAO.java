@@ -12,7 +12,7 @@ import java.util.List;
 
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
-public class UserDAO extends FactoryDAO<User> implements IDAO<User> {
+public class UserDAO extends FactoryDAO<User, String> implements IDAO<User, String> {
 
     private static UserDAO instance;
     private static EntityManagerFactory emf;
@@ -71,8 +71,8 @@ public class UserDAO extends FactoryDAO<User> implements IDAO<User> {
     }
 
     @Override
-    public User read(int id) throws ApiException {
-        return super.read(id, User.class, emf);
+    public User read(String userName) throws ApiException {
+        return super.read(userName, User.class, emf);
     }
 
     @Override
@@ -82,21 +82,21 @@ public class UserDAO extends FactoryDAO<User> implements IDAO<User> {
 
     @Override
     public User create(User user) throws ApiException {
-        return super.create(user, emf);
+        throw new UnsupportedOperationException("Use register instead");
     }
 
     @Override
-    public User update(int id, User user) throws ApiException {
-        return super.update(id, user, User.class, emf);
+    public User update(String userName, User user) throws ApiException {
+        return super.update(userName, user, User.class, emf);
     }
 
     @Override
-    public void delete(int id) throws ApiException {
-        super.delete(id, User.class, emf);
+    public void delete(String userName) throws ApiException {
+        super.delete(userName, User.class, emf);
     }
 
     @Override
-    public boolean validateId(int number) {
-        return super.validateId(number, User.class, emf);
+    public boolean validatePrimaryKey(String userName) {
+        return super.validatePrimaryKey(userName, User.class, emf);
     }
 }

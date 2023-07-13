@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
-public class PersonDAO extends FactoryDAO<Person> implements IDAO<Person> {
+public class PersonDAO extends FactoryDAO<Person, Integer> implements IDAO<Person, Integer> {
 
     private static PersonDAO instance;
     private static EntityManagerFactory emf;
@@ -22,7 +22,7 @@ public class PersonDAO extends FactoryDAO<Person> implements IDAO<Person> {
     }
 
     @Override
-    public Person read(int id) throws ApiException {
+    public Person read(Integer id) throws ApiException {
         return super.read(id, Person.class, emf);
     }
 
@@ -37,18 +37,18 @@ public class PersonDAO extends FactoryDAO<Person> implements IDAO<Person> {
     }
 
     @Override
-    public Person update(int id, Person person) throws ApiException {
+    public Person update(Integer id, Person person) throws ApiException {
         return super.update(id, person, Person.class, emf);
     }
 
     @Override
-    public void delete(int id) throws ApiException {
+    public void delete(Integer id) throws ApiException {
         super.delete(id, Person.class, emf);
     }
 
     @Override
-    public boolean validateId(int number) {
-        return super.validateId(number, Person.class, emf);
+    public boolean validatePrimaryKey(Integer number) {
+        return super.validatePrimaryKey(number, Person.class, emf);
     }
 
 }

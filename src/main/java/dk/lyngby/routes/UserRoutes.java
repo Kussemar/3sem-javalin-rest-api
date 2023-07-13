@@ -16,9 +16,9 @@ public class UserRoutes {
                 post("/login", userHandler::login);
                 post("/register", userHandler::register);
                 get("/", userHandler::readAll, RouteRoles.ADMIN);
-                get("{id}", userHandler::read, RouteRoles.ADMIN);
-                put("{id}", userHandler::update, RouteRoles.ADMIN);
-                delete("{id}", userHandler::delete, RouteRoles.ADMIN);
+                get("{name}", userHandler::read, RouteRoles.ADMIN);
+                put("{name}", userHandler::update, RouteRoles.ADMIN);
+                delete("{name}", userHandler::delete, RouteRoles.ADMIN);
             });
         };
     }

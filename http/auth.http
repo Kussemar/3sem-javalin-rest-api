@@ -25,7 +25,7 @@ POST {{url}}auth/register
 Content-Type: application/json
 
 {
-  "username": "user_manager",
+  "username": "steve",
   "password": "user_manager",
   "role": "manager"
 }
