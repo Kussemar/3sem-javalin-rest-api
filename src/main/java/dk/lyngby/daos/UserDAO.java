@@ -12,7 +12,7 @@ import java.util.List;
 
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
-public class UserDAO extends FactoryDAO<User, String> implements IDAO<User, String> {
+public class UserDAO implements IDAO<User, String> {
 
     private static UserDAO instance;
     private static EntityManagerFactory emf;
@@ -72,12 +72,22 @@ public class UserDAO extends FactoryDAO<User, String> implements IDAO<User, Stri
 
     @Override
     public User read(String userName) throws ApiException {
-        return super.read(userName, User.class, emf);
+        try (var em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+            User user = em.find(User.class, userName);
+            em.getTransaction().commit();
+            return user;
+        }
     }
 
     @Override
-    public List<User> readAll() throws ApiException {
-        return super.readAll(User.class, emf);
+    public List<User> readAll() {
+        try (var em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+            List<User> users = em.createQuery("SELECT u FROM User u", User.class).getResultList();
+            em.getTransaction().commit();
+            return users;
+        }
     }
 
     @Override
@@ -87,16 +97,34 @@ public class UserDAO extends FactoryDAO<User, String> implements IDAO<User, Stri
 
     @Override
     public User update(String userName, User user) throws ApiException {
-        return super.update(userName, user, User.class, emf);
+        try (var em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+            User userToUpdate = em.find(User.class, userName);
+            userToUpdate.setUsername(user.getUsername());
+            userToUpdate.setUserPassword(user.getUserPassword());
+            em.getTransaction().commit();
+            return userToUpdate;
+        }
     }
 
     @Override
     public void delete(String userName) throws ApiException {
-        super.delete(userName, User.class, emf);
+        try (var em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+            User user = em.find(User.class, userName);
+            em.remove(user);
+            em.getTransaction().commit();
+        }
     }
 
     @Override
     public boolean validatePrimaryKey(String userName) {
-        return super.validatePrimaryKey(userName, User.class, emf);
+        try (var em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+            User user = em.find(User.class, userName);
+            em.getTransaction().commit();
+            return user != null;
+        }
     }
 }
+

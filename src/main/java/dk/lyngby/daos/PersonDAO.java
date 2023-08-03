@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
-public class PersonDAO extends FactoryDAO<Person, Integer> implements IDAO<Person, Integer> {
+public class PersonDAO implements IDAO<Person, Integer> {
 
     private static PersonDAO instance;
     private static EntityManagerFactory emf;
@@ -23,32 +23,63 @@ public class PersonDAO extends FactoryDAO<Person, Integer> implements IDAO<Perso
 
     @Override
     public Person read(Integer id) throws ApiException {
-        return super.read(id, Person.class, emf);
+        try(var em = emf.createEntityManager()) {
+            var person = em.find(Person.class, id);
+            if (person == null) {
+                throw new ApiException(404, "Person with id " + id + " not found");
+            }
+            return person;
+        }
     }
 
     @Override
-    public List<Person> readAll() throws ApiException {
-        return super.readAll(Person.class, emf);
+    public List<Person> readAll() {
+        try(var em = emf.createEntityManager()) {
+            var query = em.createQuery("SELECT p FROM Person p", Person.class);
+            return query.getResultList();
+        }
     }
 
     @Override
     public Person create(Person person) throws ApiException {
-        return super.create(person, emf);
+        try(var em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+            em.persist(person);
+            em.getTransaction().commit();
+            return person;
+        }
     }
 
     @Override
     public Person update(Integer id, Person person) throws ApiException {
-        return super.update(id, person, Person.class, emf);
+        try(var em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+            var p = em.find(Person.class, id);
+            p.setAge(person.getAge());
+            p.setEmail(person.getEmail());
+            p.setFirstName(person.getFirstName());
+            p.setLastName(person.getLastName());
+            em.getTransaction().commit();
+            return p;
+        }
     }
 
     @Override
     public void delete(Integer id) throws ApiException {
-        super.delete(id, Person.class, emf);
+        try(var em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+            var person = em.find(Person.class, id);
+            em.remove(person);
+            em.getTransaction().commit();
+        }
     }
 
     @Override
     public boolean validatePrimaryKey(Integer number) {
-        return super.validatePrimaryKey(number, Person.class, emf);
+        try(var em = emf.createEntityManager()) {
+            var person = em.find(Person.class, number);
+            return person != null;
+        }
     }
 
 }

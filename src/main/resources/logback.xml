@@ -2,7 +2,7 @@
 
     <!-- Property SETUP   -->
 
-    <property name="LOG_BASEDIR" value="./logs"/>
+    <property name="LOG_BASEDIR" value="src/main/resources/logs"/>
     <property name="LOG_FILE" value="application"/>
     <property name="LOG_FILE_MAX_HISTORY" value="180"/>
     <property name="LOG_FILE_MAX_SIZE" value="10MB"/>

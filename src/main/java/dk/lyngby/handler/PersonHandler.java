@@ -3,7 +3,6 @@ package dk.lyngby.handler;
 import dk.lyngby.config.HibernateConfig;
 import dk.lyngby.daos.PersonDAO;
 import dk.lyngby.dtos.PersonDTO;
-import dk.lyngby.dtos.PersonIdDTO;
 import dk.lyngby.exceptions.ApiException;
 import dk.lyngby.exceptions.Message;
 import dk.lyngby.model.Person;
@@ -39,7 +38,7 @@ public class PersonHandler implements IEntityHandler<PersonDTO, Integer>{
         // entity
         List<Person> persons = PERSON_DAO.readAll();
         // dto
-        List<PersonIdDTO> personDTOS = PersonIdDTO.toPersonIdDTOList(persons);
+        List<PersonDTO> personDTOS = PersonDTO.toPersonDTOList(persons);
         // response
         ctx.res().setStatus(200);
         ctx.json(personDTOS, PersonDTO.class);

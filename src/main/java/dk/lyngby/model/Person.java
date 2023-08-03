@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "Person")
@@ -34,21 +31,11 @@ public class Person {
     @Column(name = "email", length = 45)
     private String email;
 
-    @OneToMany(mappedBy = "idPersonFK")
-    private Set<Phone> phones = new LinkedHashSet<>();
-
     public Person(String firstName, String lastName, Integer age, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
         this.email = email;
-    }
-
-    public void addPhoneToPerson(Phone p) {
-        if (p != null) {
-            phones.add(p);
-            p.addPersonToPhone(this);
-        }
     }
 
     @Override
