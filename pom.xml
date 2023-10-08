@@ -23,9 +23,9 @@
         <issuer>cphbusiness.dk</issuer>
         <token.expiration.time>3600000</token.expiration.time>
         <!--  DB    -->
-        <db.name>projectdb</db.name>
-        <db.username>dev</db.username>
-        <db.password>ax2</db.password>
+        <db.name>startcode</db.name>
+        <db.username>postgres</db.username>
+        <db.password>postgres</db.password>
         <db.connection.string>jdbc:postgresql://localhost:5432/</db.connection.string>
         <!--  Javalin    -->
         <javalin.port>7070</javalin.port>
